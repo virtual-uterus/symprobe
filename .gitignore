@@ -1,0 +1,6 @@
+# Ignore Python stuff
+__pycache__
+symprobe/__pycache__
+symprobe.egg-info
+tests/__pycache__
+
