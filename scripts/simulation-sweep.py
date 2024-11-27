@@ -11,7 +11,7 @@ Date: 11/24
 import sys
 import argparse
 
-import sweeps
+from symprobe import sweeps
 
 if __name__ == "__main__":
     # Main argument parser setup
