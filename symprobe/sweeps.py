@@ -42,24 +42,24 @@ def modify_config(config_file, param, value):
     for i, line in enumerate(lines):
         if param in line:
             found = True
-            match param:
-                case "conductivities_2d":
-                    lines[i] = f"{param} = [{value}, {value}] \n"
-                    break
-                case "conductivities_3d":
-                    lines[i] = f"{param} = [{value}, {value}, {value}] \n"
-                    break
-                case "magnitude":
-                    lines[i] = f"{param} = {value} \n"
-                    break
-                case "mesh_name":
-                    lines[i] = f'mesh_name = "{value}"\n'
-                    break
-                case "estrus":
-                    lines[i] = f'estrus = "{value}"\n'
-                case _:
-                    lines[i] = f"   {param} = {value} \n"
-                    break
+            if param == "conductivities_2d":
+                lines[i] = f"{param} = [{value}, {value}] \n"
+                break
+            if param == "conductivities_3d":
+                lines[i] = f"{param} = [{value}, {value}, {value}] \n"
+                break
+            if param == "magnitude":
+                lines[i] = f"{param} = {value} \n"
+                break
+            if param == "mesh_name":
+                lines[i] = f'mesh_name = "{value}"\n'
+                break
+            if param == "estrus":
+                lines[i] = f'estrus = "{value}"\n'
+                break
+            else:
+                lines[i] = f"   {param} = {value} \n"
+                break
     if not found:
         # If the parameter was not found
         raise ValueError(
