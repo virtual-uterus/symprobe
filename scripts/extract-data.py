@@ -90,7 +90,7 @@ if __name__ == "__main__":
                     break
 
         try:
-            pts_list = constants.PTS_LIST[mesh_name]
+            pts_list = constants.PTS_DICT[mesh_name]
 
         except KeyError:
             sys.stderr.write(

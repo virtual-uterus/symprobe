@@ -15,7 +15,7 @@ HOME = os.path.expanduser("~")
 BASE = "Documents/phd"
 RESISTIVITY = 1e-1  # Intracellular resistivity
 CONFIG_ENV_VAR = "CHASTE_MODELLING_CONFIG_DIR"
-PTS_LIST = {  # List of points to extract for the scaffolds
+PTS_DICT = {  # List of points to extract for the scaffolds
     "uterus_scaffold_1": [725, 995, 1251],
     "uterus_scaffold_2": [1401, 1927, 2439],
     "uterus_scaffold_3": [1591, 2189, 2765],
