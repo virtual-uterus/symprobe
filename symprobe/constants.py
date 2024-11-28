@@ -22,6 +22,13 @@ PTS_DICT = {  # List of points to extract for the scaffolds
     "uterus_scaffold_4": [1595, 2192, 2768],
     "uterus_scaffold_5": [2387, 3824, 4148],
 }
+RES_DICT = {  # List of points to extract for the scaffolds
+    "uterus_scaffold_1": 4492,
+    "uterus_scaffold_2": 9984,
+    "uterus_scaffold_3": 11232,
+    "uterus_scaffold_4": 14976,
+    "uterus_scaffold_5": 22464,
+}
 DIST_DICT = {  # Average distance between elements for the scaffolds
     "uterus_scaffold_1": 0.70,
     "uterus_scaffold_2": 0.46,
