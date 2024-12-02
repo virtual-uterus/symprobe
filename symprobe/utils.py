@@ -51,6 +51,35 @@ def get_print_timestep(log_path):
     raise ValueError("print timestep not found in the log file.")
 
 
+def get_mesh_name(log_path):
+    """Extracts the mesh name from the log file
+
+    Arguments:
+    log_path -- str, path to the log file.
+
+    Return:
+    mesh_name -- str, name of the mesh used.
+
+    Raises:
+    FileNotFoundError -- if the log file is not found.
+    RuntimeError -- if there was a problem reading the log file
+    ValueError -- if the mesh name is not found or cannot be parsed.
+
+    """
+    try:
+        with open(log_path, "r") as log_file:
+            for line in log_file:
+                if "mesh" in line:
+                    return line.split(":")[1].strip()
+    except FileNotFoundError as e:
+        raise FileNotFoundError(f"log file at {log_path} not found.") from e
+    except Exception as e:
+        raise RuntimeError(f"error reading log file: {e}") from e
+
+    # If no valid line is found
+    raise ValueError("mesh name not found in the log file.")
+
+
 def load_data(data_path, log_path, delimiter=","):
     """Loads the data from a csv file
 
