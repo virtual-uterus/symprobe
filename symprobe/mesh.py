@@ -14,7 +14,7 @@ import pyvista as pv
 import symprobe.paraview_fct as pf
 
 from symprobe import utils, plots
-from symprobe.constants import QUALITY_METRIC_MAP
+from symprobe.constants import QUALITY_METRIC_MAP, RES_DICT
 
 
 def neighbour_distance(mesh_path):
@@ -139,8 +139,9 @@ def quality_information(file_path, mesh_name, metric, sim_range, extension):
         sim_numbers = utils.get_range(sim_range)
 
         quality_dict = {}
+        density_data = np.zeros(len(sim_numbers))
 
-        for sim_nb in sim_numbers:
+        for i, sim_nb in enumerate(sim_numbers):
             mesh_path = "{}_{}.{}".format(
                 file_path,
                 sim_nb,
@@ -154,7 +155,11 @@ def quality_information(file_path, mesh_name, metric, sim_range, extension):
             except Exception:
                 raise
 
-        plots.plot_multi_mesh_quality(quality_dict, QUALITY_METRIC_MAP[metric])
+            density_data[i] = RES_DICT[f"{mesh_name}_{sim_nb}"]
+
+        plots.plot_multi_mesh_quality(
+            quality_dict, density_data, QUALITY_METRIC_MAP[metric]
+        )
 
     else:
         # Plot for a single mesh

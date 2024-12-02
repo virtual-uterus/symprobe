@@ -45,12 +45,13 @@ def plot_cell_data(V, t):
     plt.show()
 
 
-def plot_resolution_convergence(comp_data, metric):
+def plot_resolution_convergence(comp_data, density_data, metric):
     """Plots the convergence for different resolution meshes
 
     Arguments:
     comp_data -- np.array, comparison data.
-    metric -- str, metric used for the comparison
+    density_data -- np.array, number of elements in each mesh.
+    metric -- str, metric used for the comparison.
 
     Return:
 
@@ -60,12 +61,7 @@ def plot_resolution_convergence(comp_data, metric):
     # Create figure and plot
     fig, ax = plt.subplots(dpi=300)
 
-    x_axis = np.arange(len(comp_data))
-
-    plt.plot(x_axis, comp_data, ".-")
-
-    # Reset x-axis ticks
-    plt.xticks(ticks=[0, len(comp_data) - 1], labels=["Coarse", "Fine"])
+    plt.plot(density_data, comp_data, "k.-")
 
     plt.xlabel("Mesh resolution")
     plt.ylabel("{}".format(metric.upper()))
@@ -98,13 +94,14 @@ def plot_single_mesh_quality(quality_data, metric, mesh_name):
     plt.show()
 
 
-def plot_multi_mesh_quality(quality_dict, metric):
+def plot_multi_mesh_quality(quality_dict, density_data, metric):
     """Plots the quality data for multiple meshes as single points with
     error bars
 
     Arguments:
     quality_dict -- dict, dictionnary with the quality data as value
     and mesh number as key.
+    density_data -- np.array, number of elements in each mesh.
     metric -- str, name of the quality metric.
 
     Return:
@@ -125,7 +122,7 @@ def plot_multi_mesh_quality(quality_dict, metric):
         cpt += 1
 
     ax.errorbar(
-        np.arange(len(data)),
+        density_data,
         data,
         yerr=yerr,
         fmt=".-",
@@ -133,9 +130,6 @@ def plot_multi_mesh_quality(quality_dict, metric):
         capsize=5,
         label="Mean ± Std",
     )
-
-    # Reset x-axis ticks
-    plt.xticks(ticks=[0, len(data) - 1], labels=["Coarse", "Fine"])
 
     plt.xlabel("Mesh resolution")
     plt.ylabel("{}".format(metric))

@@ -63,8 +63,6 @@ if __name__ == "__main__":
         args.dir_path,
     )
 
-    # Dictionnary to store data and correlation values
-
     for i, sim_nb in enumerate(sim_numbers):
         # Iterate over each simulation
         current_sim_name = f"{args.sim_name}_{sim_nb:03}"
@@ -89,10 +87,12 @@ if __name__ == "__main__":
         if i == 0:
             # Allocate space for data on the first loop
             data = np.zeros((len(V), len(sim_numbers)))
+            nb_mesh_eles = np.zeros(len(sim_numbers))
 
         data[:, i] = V[:, 0]
+        nb_mesh_eles[i] = constants.RES_DICT[utils.get_mesh_name(log_path)]
 
-    comp_data = np.zeros((len(sim_numbers) - 1))
+    comp_data = np.zeros(len(sim_numbers))
 
     for i in range(len(sim_numbers) - 1):
         comp_data[i] = metrics.compute_comparison(
@@ -101,4 +101,10 @@ if __name__ == "__main__":
             args.metric,
         )
 
-    plots.plot_resolution_convergence(comp_data, args.metric)
+    comp_data[len(sim_numbers) - 1] = metrics.compute_comparison(
+        data[:, len(sim_numbers) - 1],
+        data[:, len(sim_numbers) - 1],
+        args.metric,
+    )
+
+    plots.plot_resolution_convergence(comp_data, nb_mesh_eles, args.metric)
