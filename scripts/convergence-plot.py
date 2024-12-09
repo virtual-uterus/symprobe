@@ -29,7 +29,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "metric",
         type=str,
-        choices={"rmse", "mae", "mse"},
+        choices={"rmse", "mae", "mse", "vrd"},
         help="metric used for comparison",
     )
     parser.add_argument(
@@ -99,12 +99,14 @@ if __name__ == "__main__":
             data[:, i],
             data[:, i + 1],
             args.metric,
+            time=t,
         )
 
     comp_data[len(sim_numbers) - 1] = metrics.compute_comparison(
         data[:, len(sim_numbers) - 1],
         data[:, len(sim_numbers) - 1],
         args.metric,
+        time=t,
     )
 
     plots.plot_resolution_convergence(comp_data, nb_mesh_eles, args.metric)
