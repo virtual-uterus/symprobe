@@ -12,8 +12,11 @@ import re
 
 import numpy as np
 import pandas as pd
+import quantities as quant
 
 from symprobe.constants import CONVERSION_IDX
+from scipy.signal import find_peaks
+from neo.core import SpikeTrain
 
 
 def get_print_timestep(log_path):
@@ -228,3 +231,38 @@ def print_quality(quality_array, metric_name):
     print("25th percentile: {:.2f}".format(np.percentile(quality_array, 25)))
     print("Median: {:.2f}".format(np.median(quality_array)))
     print("75th percentile: {:.2f}".format(np.percentile(quality_array, 75)))
+
+
+def extract_spike_times(signal, time, height=-30):
+    """Extract spike times from a signal using peak detection
+
+    Args:
+    signal -- np.array, signal amplitudes over time.
+    time -- np.array, corresponding time points.
+    height -- float, minimum height for peaks to be considered spikes.
+    distance -- int, minimum distance between peaks.
+
+    Returns:
+    spike_times -- np.array, times of detected spikes.
+
+    Raises:
+
+    """
+    peaks, _ = find_peaks(signal, height=height)
+    return time[peaks]
+
+
+def create_spike_train(spike_times, t_stop):
+    """Convert spike times to a SpikeTrain object
+
+    Args:
+    spike_times -- np.array, detected spike times.
+    t_stop -- float, total duration of the signal.
+
+    Returns:
+    spike_train -- SpikeTrain object, spike times of train.
+
+    Raises:
+
+    """
+    return SpikeTrain(spike_times * quant.ms, t_stop=t_stop * quant.ms)
