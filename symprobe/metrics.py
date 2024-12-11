@@ -155,6 +155,8 @@ def compute_comparison(y_true, y_pred, metric, tau=1.0, time=np.array([])):
 
             case "mse":
                 return compute_mse(y_true, y_pred)
+            case "vrd":
+                return compute_van_rossum_distance(y_true, y_pred, time=time)
             case _:
                 raise ValueError("invalid metric {}\n".format(metric))
     except ValueError:
