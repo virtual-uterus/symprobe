@@ -107,7 +107,7 @@ def get_dim_config(dim):
 
     except OSError:
         raise
-    return os.path.join(config_dir, f"{dim}d_params.toml")
+    return os.path.join(config_dir, "general", f"{dim}d_params.toml")
 
 
 def get_cell_config(dim_config_file):
@@ -154,10 +154,10 @@ def get_cell_config(dim_config_file):
         raise ValueError("estrus not found in config file")
 
     if cell_type == "Roesler":
-        return os.path.join(config_dir, f"{cell_type}_{estrus}.toml")
+        return os.path.join(config_dir, "estrus", f"{cell_type}_{estrus}.toml")
 
     else:
-        return os.path.join(config_dir, f"{cell_type}.toml")
+        return os.path.join(config_dir, "cell", f"{cell_type}.toml")
 
 
 def resolution_sweep(dim, mesh_name, start_val, end_val):
