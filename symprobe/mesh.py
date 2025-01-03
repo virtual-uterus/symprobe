@@ -172,7 +172,7 @@ def quality_information(file_path, mesh_name, metric, sim_range, extension):
 
         except Exception:
             raise
-
+        utils.print_quality(quality_data, metric)
         plots.plot_single_mesh_quality(
             quality_data, QUALITY_METRIC_MAP[metric], mesh_name
         )
