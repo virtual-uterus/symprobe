@@ -11,6 +11,8 @@ Date: 11/24
 import matplotlib.pyplot as plt
 import numpy as np
 
+from .constants import LEFT, RIGHT, BOTTOM
+
 
 def plot_cell_data(V, t):
     """Plots the membrane potential of cells
@@ -66,6 +68,10 @@ def plot_resolution_convergence(comp_data, density_data, metric):
     plt.xlabel("Mesh resolution")
     plt.ylabel("{}".format(metric.upper()))
 
+    plt.ylim([0, 0.1])
+    ax.ticklabel_format(axis="x", style="sci", scilimits=(0, 0))
+
+    plt.subplots_adjust(left=LEFT, right=RIGHT, bottom=BOTTOM)
     plt.show()
 
 
@@ -133,4 +139,8 @@ def plot_multi_mesh_quality(quality_dict, density_data, metric):
 
     plt.xlabel("Mesh resolution")
     plt.ylabel("{}".format(metric))
+
+    ax.ticklabel_format(axis="x", style="sci", scilimits=(0, 0))
+
+    plt.subplots_adjust(left=LEFT, right=RIGHT, bottom=BOTTOM)
     plt.show()

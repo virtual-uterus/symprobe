@@ -49,3 +49,7 @@ QUALITY_METRIC_MAP = {  # Mapping for quality metrics
     "ja": "Jacobian",
 }
 ESTRUS = ["proestrus", "estrus", "metestrus", "diestrus"]
+# Plot constants
+LEFT = 0.22
+BOTTOM = 0.17
+RIGHT = 0.80
