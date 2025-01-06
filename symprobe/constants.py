@@ -16,11 +16,11 @@ BASE = "Documents/phd"
 RESISTIVITY = 1e-1  # Intracellular resistivity
 CONFIG_ENV_VAR = "CHASTE_MODELLING_CONFIG_DIR"
 PTS_DICT = {  # List of points to extract for the scaffolds
-    "uterus_scaffold_1": [195, 995, 1251],
-    "uterus_scaffold_2": [1088, 1927, 2439],
-    "uterus_scaffold_3": [1595, 2189, 2765],
-    "uterus_scaffold_4": [2387, 2192, 2768],
-    "uterus_scaffold_5": [3183, 3824, 4148],
+    "uterus_scaffold_1": [195, 265, 345],
+    "uterus_scaffold_2": [1088, 1493, 1973],
+    "uterus_scaffold_3": [1595, 2192, 2912],
+    "uterus_scaffold_4": [2387, 3824, 4364],
+    "uterus_scaffold_5": [3183, 4379, 5819],
 }
 RES_DICT = {  # List of points to extract for the scaffolds
     "uterus_scaffold_1": 1258,
