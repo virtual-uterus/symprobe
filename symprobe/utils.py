@@ -217,20 +217,20 @@ def print_quality(quality_array, metric_name):
     """
     print("{} quality data:".format(metric_name))
     print(
-        "Mean: {:.2f} \u00b1 {:.2f}".format(
+        "Mean: {:.4f} \u00b1 {:.4f}".format(
             np.mean(quality_array),
             np.std(quality_array),
         )
     )
     print(
-        "Min-Max: [{:.2f} - {:.2f}]".format(
+        "Min-Max: [{:.4f} - {:.4f}]".format(
             np.min(quality_array),
             np.max(quality_array),
         )
     )
-    print("25th percentile: {:.2f}".format(np.percentile(quality_array, 25)))
+    print("10th percentile: {:.4f}".format(np.percentile(quality_array, 10)))
     print("Median: {:.2f}".format(np.median(quality_array)))
-    print("75th percentile: {:.2f}".format(np.percentile(quality_array, 75)))
+    print("90th percentile: {:.4f}".format(np.percentile(quality_array, 90)))
 
 
 def extract_spike_times(signal, time, height=-30):
