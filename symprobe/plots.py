@@ -91,12 +91,8 @@ def plot_single_mesh_quality(quality_data, metric, mesh_name):
     # Create figure and plot
     fig, ax = plt.subplots(dpi=300)
 
-    ax.boxplot(quality_data)
+    ax.hist(quality_data, 50)
 
-    ax.set_xticks([])  # Remove xticks
-    plt.ylabel("{}".format(metric))
-
-    plt.title(mesh_name)
     plt.show()
 
 
