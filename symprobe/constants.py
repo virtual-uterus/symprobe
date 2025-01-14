@@ -47,6 +47,7 @@ CONVERSION_IDX = [  # List of node indices for each tetrahedra
 QUALITY_METRIC_MAP = {  # Mapping for quality metrics
     "ar": "Aspect Ratio",
     "ja": "Jacobian",
+    "mr": "Mean Ratio",
 }
 ESTRUS = ["proestrus", "estrus", "metestrus", "diestrus"]
 # Plot constants

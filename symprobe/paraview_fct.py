@@ -122,7 +122,7 @@ def paraview_quality(mesh_path, metric):
 
     Arguments:
     mesh_path -- str, path to the mesh vtu file.
-    metric -- str, quality metric used {Aspect ratio, Jacobian}.
+    metric -- str, quality metric used {Aspect Ratio, Mean Ratio, Jacobian}.
 
     Return:
     quality_data -- np.array, quality data for the given metric.
