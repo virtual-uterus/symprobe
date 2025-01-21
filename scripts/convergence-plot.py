@@ -27,6 +27,12 @@ if __name__ == "__main__":
         help="path from BASE to the Chaste save directory",
     )
     parser.add_argument(
+        "estrus_dir",
+        type=str,
+        metavar="estrus-dir",
+        help="name of the estrus specific directory",
+    )
+    parser.add_argument(
         "metric",
         type=str,
         choices={"rmse", "mae", "mse", "vrd"},
@@ -43,6 +49,13 @@ if __name__ == "__main__":
         type=str,
         default="simulation",
         help="name of the simulation prefix",
+    )
+    parser.add_argument(
+        "--estrus",
+        type=str,
+        default="all",
+        choices={"proestrus", "estrus", "metestrus", "diestrus", "all"},
+        help="estrus stage",
     )
     parser.add_argument(
         "--delimiter",
@@ -63,50 +76,62 @@ if __name__ == "__main__":
         args.dir_path,
     )
 
-    for i, sim_nb in enumerate(sim_numbers):
-        # Iterate over each simulation
-        current_sim_name = f"{args.sim_name}_{sim_nb:03}"
+    if args.estrus == "all":
+        estrus = constants.ESTRUS
 
-        data_path = os.path.join(
-            dir_path,
-            "extract",
-            "{}.csv".format(current_sim_name),
-        )
-        log_path = os.path.join(
-            dir_path,
-            "log",
-            "{}.log".format(current_sim_name),
-        )
+    else:
+        estrus = [args.estrus]
 
-        try:
-            V, t = utils.load_data(data_path, log_path, args.delimiter)
-        except Exception as e:
-            sys.stderr.write("Error: {}\n".format(e))
-            exit()
+    comp_dict = {}  # Create a dictionnary for the data of each stage
 
-        if i == 0:
-            # Allocate space for data on the first loop
-            data = np.zeros((len(V), len(sim_numbers)))
-            nb_mesh_eles = np.zeros(len(sim_numbers))
+    for stage in estrus:
+        estrus_path = os.path.join(dir_path, stage + "_" + args.estrus_dir)
 
-        data[:, i] = V[:, 0]
-        nb_mesh_eles[i] = constants.RES_DICT[utils.get_mesh_name(log_path)]
+        for i, sim_nb in enumerate(sim_numbers):
+            # Iterate over each simulation
+            current_sim_name = f"{args.sim_name}_{sim_nb:03}"
 
-    comp_data = np.zeros(len(sim_numbers))
+            data_path = os.path.join(
+                estrus_path,
+                "extract",
+                "{}.csv".format(current_sim_name),
+            )
+            log_path = os.path.join(
+                estrus_path,
+                "log",
+                "{}.log".format(current_sim_name),
+            )
 
-    for i in range(len(sim_numbers) - 1):
-        comp_data[i] = metrics.compute_comparison(
-            data[:, i],
-            data[:, i + 1],
+            try:
+                V, t = utils.load_data(data_path, log_path, args.delimiter)
+            except Exception as e:
+                sys.stderr.write("Error: {}\n".format(e))
+                exit()
+
+            if i == 0:
+                # Allocate space for data on the first loop
+                data = np.zeros((len(V), len(sim_numbers)))
+                nb_mesh_eles = np.zeros(len(sim_numbers))
+
+            data[:, i] = V[:, 0]
+            nb_mesh_eles[i] = constants.RES_DICT[utils.get_mesh_name(log_path)]
+
+        comp_data = np.zeros(len(sim_numbers))
+
+        for i in range(len(sim_numbers) - 1):
+            comp_data[i] = metrics.compute_comparison(
+                data[:, i],
+                data[:, i + 1],
+                args.metric,
+                time=t,
+            )
+
+        comp_data[len(sim_numbers) - 1] = metrics.compute_comparison(
+            data[:, len(sim_numbers) - 1],
+            data[:, len(sim_numbers) - 1],
             args.metric,
             time=t,
         )
+        comp_dict[stage] = comp_data  # Add data to the estrus dict
 
-    comp_data[len(sim_numbers) - 1] = metrics.compute_comparison(
-        data[:, len(sim_numbers) - 1],
-        data[:, len(sim_numbers) - 1],
-        args.metric,
-        time=t,
-    )
-
-    plots.plot_resolution_convergence(comp_data, nb_mesh_eles, args.metric)
+    plots.plot_resolution_convergence(comp_dict, nb_mesh_eles, args.metric)

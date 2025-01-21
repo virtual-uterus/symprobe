@@ -50,7 +50,14 @@ QUALITY_METRIC_MAP = {  # Mapping for quality metrics
     "mr": "Mean Ratio",
 }
 ESTRUS = ["proestrus", "estrus", "metestrus", "diestrus"]
+
 # Plot constants
 LEFT = 0.22
 BOTTOM = 0.17
 RIGHT = 0.80
+COLOURS = {
+    "proestrus": "r",
+    "estrus": "b",
+    "metestrus": "g",
+    "diestrus": "k",
+}
