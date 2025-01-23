@@ -11,7 +11,7 @@ Date: 11/24
 import matplotlib.pyplot as plt
 import numpy as np
 
-from .constants import LEFT, RIGHT, BOTTOM, COLOURS, ESTRUS
+from .constants import LEFT, RIGHT, BOTTOM, COLOURS
 
 
 def plot_cell_data(V, t):
@@ -43,7 +43,7 @@ def plot_cell_data(V, t):
 
     # Assume that cells are organised from ovaries to cervix
     plt.legend(["Ovarian end", "Centre", "Cervical end"])
-    plt.tight_layout()
+    plt.subplots_adjust(left=LEFT, right=RIGHT, bottom=BOTTOM)
     plt.show()
 
 
