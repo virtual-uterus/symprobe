@@ -62,8 +62,8 @@ if __name__ == "__main__":
     quality_parser.add_argument(
         "metric",
         type=str,
-        choices={"ar", "mr", "ja"},
-        help="quality metric to use (aspect ratio, mean ratio, jacobian)",
+        choices={"ar", "mr", "sj"},
+        help="quality metric (aspect ratio, mean ratio, scaled jacobian)",
     )
     quality_parser.set_defaults(func=mesh.quality_information)
 
