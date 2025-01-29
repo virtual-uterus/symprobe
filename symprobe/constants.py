@@ -21,6 +21,11 @@ PTS_DICT = {  # List of points to extract for the scaffolds
     "uterus_scaffold_3": [1595, 2192, 2912],
     "uterus_scaffold_4": [2387, 3824, 4364],
     "uterus_scaffold_5": [3183, 4379, 5819],
+    "uterus_scaffold_norm_1": [195, 265, 345],
+    "uterus_scaffold_norm_2": [1088, 1493, 1973],
+    "uterus_scaffold_norm_3": [1595, 2192, 2912],
+    "uterus_scaffold_norm_4": [2387, 3824, 4364],
+    "uterus_scaffold_norm_5": [3183, 4379, 5819],
 }
 RES_DICT = {  # Number of elements in the scaffolds
     "uterus_scaffold_1": 1258,
@@ -28,13 +33,23 @@ RES_DICT = {  # Number of elements in the scaffolds
     "uterus_scaffold_3": 14976,
     "uterus_scaffold_4": 22464,
     "uterus_scaffold_5": 33696,
+    "uterus_scaffold_norm_1": 1258,
+    "uterus_scaffold_norm_2": 9984,
+    "uterus_scaffold_norm_3": 14976,
+    "uterus_scaffold_norm_4": 22464,
+    "uterus_scaffold_norm_5": 33696,
 }
 DIST_DICT = {  # Average distance between elements for the scaffolds
-    "uterus_scaffold_1": 0.03,
-    "uterus_scaffold_2": 0.01,
-    "uterus_scaffold_3": 0.01,
-    "uterus_scaffold_4": 0.01,
-    "uterus_scaffold_5": 0.01,
+    "uterus_scaffold_1": 1.27,
+    "uterus_scaffold_2": 0.65,
+    "uterus_scaffold_3": 0.48,
+    "uterus_scaffold_4": 0.46,
+    "uterus_scaffold_5": 0.44,
+    "uterus_scaffold_norm_1": 0.03,
+    "uterus_scaffold_norm_2": 0.01,
+    "uterus_scaffold_norm_3": 0.01,
+    "uterus_scaffold_norm_4": 0.01,
+    "uterus_scaffold_norm_5": 0.01,
 }
 CONVERSION_IDX = [  # List of node indices for each tetrahedra
     [0, 1, 2, 4],  # Tetrahedron 1
