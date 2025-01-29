@@ -12,7 +12,8 @@ Date: 11/24
 import os
 import subprocess
 
-from symprobe.constants import CONFIG_ENV_VAR, DIST_DICT, RESISTIVITY, ESTRUS
+from symprobe.constants import CONFIG_ENV_VAR, ESTRUS
+from symprobe.constants import RESISTANCE, DIST_DICT
 
 
 def modify_config(config_file, param, value):
@@ -196,7 +197,7 @@ def resolution_sweep(dim, mesh_name, start_val, end_val):
     for j in range(start_val, end_val + 1):
         # Read and modify config file
         cur_mesh = f"{mesh_name}_{j}"
-        conduct_val = 1 / (RESISTIVITY * DIST_DICT[cur_mesh] ** 2)
+        conduct_val = 1 / (RESISTANCE * DIST_DICT[cur_mesh] ** 2)
         try:
             modify_config(dim_config_file, "mesh_name", cur_mesh)
             modify_config(

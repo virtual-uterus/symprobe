@@ -13,7 +13,7 @@ import os
 # Define global constants
 HOME = os.path.expanduser("~")
 BASE = "Documents/phd"
-RESISTIVITY = 200  # Intracellular resistivity
+RESISTANCE = 2000  # Specific resistance
 CONFIG_ENV_VAR = "CHASTE_MODELLING_CONFIG_DIR"
 PTS_DICT = {  # List of points to extract for the scaffolds
     "uterus_scaffold_1": [195, 265, 345],
