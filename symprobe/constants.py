@@ -16,16 +16,16 @@ BASE = "Documents/phd"
 RESISTANCE = 2000  # Specific resistance
 CONFIG_ENV_VAR = "CHASTE_MODELLING_CONFIG_DIR"
 PTS_DICT = {  # List of points to extract for the scaffolds
-    "uterus_scaffold_1": [195, 265, 345],
-    "uterus_scaffold_2": [1088, 1493, 1973],
-    "uterus_scaffold_3": [1595, 2192, 2912],
-    "uterus_scaffold_4": [2387, 3824, 4364],
-    "uterus_scaffold_5": [3183, 4379, 5819],
-    "uterus_scaffold_norm_1": [195, 265, 345],
-    "uterus_scaffold_norm_2": [1088, 1493, 1973],
-    "uterus_scaffold_norm_3": [1595, 2192, 2912],
-    "uterus_scaffold_norm_4": [2387, 3824, 4364],
-    "uterus_scaffold_norm_5": [3183, 4379, 5819],
+    "uterus_scaffold_1": [195, 265, 329],
+    "uterus_scaffold_2": [1088, 1493, 1971],
+    "uterus_scaffold_3": [1595, 2192, 2908],
+    "uterus_scaffold_4": [2387, 3824, 4358],
+    "uterus_scaffold_5": [3183, 4379, 5813],
+    "uterus_scaffold_norm_1": [195, 265, 329],
+    "uterus_scaffold_norm_2": [1088, 1493, 1971],
+    "uterus_scaffold_norm_3": [1595, 2192, 2908],
+    "uterus_scaffold_norm_4": [2387, 3824, 4358],
+    "uterus_scaffold_norm_5": [3183, 4379, 5813],
 }
 RES_DICT = {  # Number of elements in the scaffolds
     "uterus_scaffold_1": 1258,
