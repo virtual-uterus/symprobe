@@ -19,7 +19,7 @@ setup(
     long_description_content_type="text/markdown",  # Use Markdown for README
     author="Mathias Roesler",
     author_email="mroe734@aucklanduni.ac.nz",
-    url="https://github.com/virtual-uterus/uterine-modelling",
+    url="https://github.com/virtual-uterus/symprobe",
     license="Apache License 2.0",  # License type
     packages=find_packages(),
     python_requires=">=3.8",  # Minimum Python version required
