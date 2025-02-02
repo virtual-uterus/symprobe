@@ -14,12 +14,13 @@ import numpy as np
 from .constants import LEFT, RIGHT, BOTTOM, COLOURS
 
 
-def plot_cell_data(V, t):
+def plot_cell_data(V, t, estrus="estrus"):
     """Plots the membrane potential of cells
 
     Arguments:
     V -- ndarray, array with data from N cells to be plotted.
     t -- ndarray, time vector.
+    estrus -- str, estrus phase, default value "estrus".
 
     Return:
 
@@ -28,23 +29,22 @@ def plot_cell_data(V, t):
 
     """
     # Create figure and plot
-    fig, ax = plt.subplots(dpi=300)
 
     if not V.shape[0] == t.shape[0]:
         raise ValueError("dimensions must agree.")
 
     for j in range(V.shape[1]):
-        plt.plot(t, V[:, j])
+        fig, ax = plt.subplots(dpi=300)
+        plt.plot(t, V[:, j], COLOURS[estrus], linestyle="-")
 
-    plt.xlabel("Time (s)")
-    plt.ylabel("Amplitude (mV)")
+        plt.xlabel("Time (s)")
+        plt.ylabel("Amplitude (mV)")
 
-    plt.xlim([0, max(t)])
+        plt.xlim([0, max(t)])
+        plt.ylim([-70, 15])
 
-    # Assume that cells are organised from ovaries to cervix
-    plt.legend(["Ovarian end", "Centre", "Cervical end"])
-    plt.subplots_adjust(left=LEFT, right=RIGHT, bottom=BOTTOM)
-    plt.show()
+        plt.subplots_adjust(left=LEFT, right=RIGHT, bottom=BOTTOM)
+        plt.show()
 
 
 def plot_resolution_convergence(comp_dict, density_data, metric):
