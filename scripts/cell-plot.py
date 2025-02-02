@@ -37,6 +37,12 @@ if __name__ == "__main__":
         help="delimiter for the reading the data",
         default=",",
     )
+    parser.add_argument(
+        "--estrus",
+        type=str,
+        choices={"proestrus", "estrus", "metestrus", "diestrus"},
+        default="estrus",
+    )
 
     # Parse input arguments
     args = parser.parse_args()
@@ -60,6 +66,6 @@ if __name__ == "__main__":
 
     try:
         V, t = utils.load_data(data_path, log_path, args.delimiter)
-        plots.plot_cell_data(V, t)
+        plots.plot_cell_data(V, t, estrus=args.estrus)
     except Exception as e:
         sys.stderr.write("Error: {}\n".format(e))
