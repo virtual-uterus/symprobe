@@ -96,6 +96,9 @@ def plot_single_mesh_quality(quality_data, metric, mesh_name):
 
     ax.hist(quality_data, 50)
 
+    if metric == "Scaled Jacobian" or metric == "Mean Ratio":
+        plt.xlim([0, 1])
+
     plt.show()
 
 
@@ -138,6 +141,9 @@ def plot_multi_mesh_quality(quality_dict, density_data, metric):
 
     plt.xlabel("Mesh resolution")
     plt.ylabel("{}".format(metric))
+
+    if metric == "Scaled Jacobian" or metric == "Mean Ratio":
+        plt.ylim([0, 1])
 
     ax.ticklabel_format(axis="x", style="sci", scilimits=(0, 0))
 
