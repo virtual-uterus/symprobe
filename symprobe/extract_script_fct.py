@@ -17,6 +17,9 @@ def resolution_fct(
     sim_numbers = utils.get_range(rng)
 
     if type(sim_numbers) is type(int()):
+        if estrus == "all":
+            raise ValueError("estrus cannot be all with a single simulation")
+
         sim_numbers = [sim_numbers]
 
     if estrus == "all":
@@ -84,6 +87,12 @@ def cell_fct(dir_path, rng, sim_name, estrus, delimiter):
     """ """
     sim_numbers = utils.get_range(rng)
 
+    if type(sim_numbers) is type(int()):
+        if estrus == "all":
+            raise ValueError("estrus cannot be all with a single simulation")
+
+        sim_numbers = [sim_numbers]
+
     if estrus == "all" and len(sim_numbers) != 4:
         raise ValueError("range must be 4 if estrus is set to all")
 
@@ -94,8 +103,6 @@ def cell_fct(dir_path, rng, sim_name, estrus, delimiter):
     else:
         estrus = estrus
         nb_sims = sim_numbers
-        if type(nb_sims) is type(int()):
-            nb_sims = [nb_sims]
 
     for i in nb_sims:
         current_sim_name = f"{sim_name}_{(i):03}"
