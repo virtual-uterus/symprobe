@@ -86,14 +86,14 @@ def cell_fct(dir_path, rng, sim_name, estrus, delimiter):
 
     if estrus == "all":
         estrus = constants.ESTRUS
-        nb_sims = 4
+        nb_sims = np.arange(1, 5)
 
     else:
         estrus = estrus
         nb_sims = sim_numbers
 
-    for i in range(nb_sims):
-        current_sim_name = f"{sim_name}_{(i + 1):03}"
+    for i in nb_sims:
+        current_sim_name = f"{sim_name}_{(i):03}"
 
         data_path = os.path.join(
             dir_path,
