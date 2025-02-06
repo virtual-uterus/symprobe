@@ -31,8 +31,8 @@ def check_broadcasting(y_true, y_pred):
     try:
         # Check broadcasting compatibility
         np.broadcast_arrays(y_true, y_pred)
-    except ValueError:
-        raise
+    except ValueError as e:
+        raise e
 
 
 def compute_rmse(y_true, y_pred):
@@ -51,8 +51,8 @@ def compute_rmse(y_true, y_pred):
     # Check broadcasting before calculation
     try:
         check_broadcasting(y_true, y_pred)
-    except ValueError:
-        raise
+    except ValueError as e:
+        raise e
     return np.sqrt(np.mean((y_true - y_pred) ** 2))
 
 
@@ -72,8 +72,8 @@ def compute_mae(y_true, y_pred):
     # Check broadcasting before calculation
     try:
         check_broadcasting(y_true, y_pred)
-    except ValueError:
-        raise
+    except ValueError as e:
+        raise e
     return np.mean(np.abs(y_true - y_pred))
 
 
@@ -93,8 +93,8 @@ def compute_mse(y_true, y_pred):
     # Check broadcasting before calculation
     try:
         check_broadcasting(y_true, y_pred)
-    except ValueError:
-        raise
+    except ValueError as e:
+        raise e
     return np.mean((y_true - y_pred) ** 2)
 
 
@@ -159,5 +159,5 @@ def compute_comparison(y_true, y_pred, metric, tau=1.0, time=np.array([])):
                 return compute_van_rossum_distance(y_true, y_pred, time=time)
             case _:
                 raise ValueError("invalid metric {}\n".format(metric))
-    except ValueError:
-        raise
+    except ValueError as e:
+        raise e

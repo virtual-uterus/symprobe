@@ -152,11 +152,11 @@ def load_data(data_path, log_path, delimiter=","):
     try:
         timestep = get_print_timestep(log_path)
     except FileNotFoundError as e:
-        raise FileNotFoundError from e
+        raise e
     except RuntimeError as e:
-        raise RuntimeError from e
+        raise e
     except ValueError as e:
-        raise ValueError from e
+        raise e
 
     # Get column names
     columns = df.columns

@@ -35,8 +35,8 @@ def modify_config(config_file, param, value):
     try:
         with open(config_file, "r") as f:
             lines = f.readlines()
-    except FileNotFoundError:
-        raise
+    except FileNotFoundError as e:
+        raise e
 
     found = False  # To check param is found
 
@@ -106,8 +106,8 @@ def get_dim_config(dim):
     try:
         config_dir = get_config_dir()
 
-    except OSError:
-        raise
+    except OSError as e:
+        raise e
     return os.path.join(config_dir, "general", f"{dim}d_params.toml")
 
 
@@ -128,8 +128,8 @@ def get_cell_config(dim_config_file):
     try:
         config_dir = get_config_dir()
 
-    except OSError:
-        raise
+    except OSError as e:
+        raise e
 
     type_found = False
     estrus_found = False
@@ -145,8 +145,8 @@ def get_cell_config(dim_config_file):
                     # Get estrus if the cell type is Roesler
                     estrus = line.split('"')[1]
                     estrus_found = True
-    except FileNotFoundError:
-        raise
+    except FileNotFoundError as e:
+        raise e
 
     if not type_found:
         raise ValueError("cell_type not found in config file")
@@ -187,8 +187,8 @@ def resolution_sweep(dim, mesh_name, start_val, end_val):
         dim_config_file = get_dim_config(dim)
         cell_config_file = get_cell_config(dim_config_file)
 
-    except Exception:
-        raise
+    except Exception as e:
+        raise e
 
     # Check if start value is greater than end value
     if start_val > end_val:
@@ -205,10 +205,10 @@ def resolution_sweep(dim, mesh_name, start_val, end_val):
                 f"conductivities_{dim}d",
                 conduct_val,
             )
-        except ValueError:
-            raise
-        except FileNotFoundError:
-            raise
+        except ValueError as e:
+            raise e
+        except FileNotFoundError as e:
+            raise e
 
         # Run the chaste simulation
         subprocess.run(["uterine-simulation", str(dim)])
@@ -245,8 +245,8 @@ def parameter_sweep(dim, param, start_val, end_val, step):
         dim_config_file = get_dim_config(dim)
         cell_config_file = get_cell_config(dim_config_file)
 
-    except Exception:
-        raise
+    except Exception as e:
+        raise e
 
     # Check if start value is greater than end value
     if value > end:
@@ -256,10 +256,10 @@ def parameter_sweep(dim, param, start_val, end_val, step):
         # Read and modify config file
         try:
             modify_config(cell_config_file, param, value)
-        except ValueError:
-            raise
-        except FileNotFoundError:
-            raise
+        except ValueError as e:
+            raise e
+        except FileNotFoundError as e:
+            raise e
 
         # Run the chaste simulation
         subprocess.run(["uterine-simulation", str(dim)])
@@ -291,8 +291,8 @@ def estrus_sweep(dim):
     try:
         dim_config_file = get_dim_config(dim)
 
-    except Exception:
-        raise
+    except Exception as e:
+        raise e
 
     dim_config_file = get_dim_config(dim)
 
@@ -300,10 +300,10 @@ def estrus_sweep(dim):
         # Read and modify config file
         try:
             modify_config(dim_config_file, "estrus", ESTRUS[j])
-        except ValueError:
-            raise
-        except FileNotFoundError:
-            raise
+        except ValueError as e:
+            raise e
+        except FileNotFoundError as e:
+            raise e
 
         # Run the chaste simulation
         subprocess.run(["uterine-simulation", str(dim)])

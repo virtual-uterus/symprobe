@@ -35,8 +35,8 @@ def neighbour_distance(mesh_path):
     try:
         mesh = pv.read(mesh_path)
 
-    except FileNotFoundError:
-        raise
+    except FileNotFoundError as e:
+        raise e
 
     # Calculate centroids of all cells
     centroids = mesh.cell_centers().points
@@ -88,8 +88,8 @@ def distance_information(file_path, mesh_name, sim_range, extension):
 
             try:
                 distance = neighbour_distance(mesh_path)
-            except FileNotFoundError:
-                raise
+            except FileNotFoundError as e:
+                raise e
 
             print(
                 "{}_{}: mean distance {:.2f} \u00b1 {:.2f}".format(
@@ -104,8 +104,8 @@ def distance_information(file_path, mesh_name, sim_range, extension):
         mesh_path = "{}.{}".format(file_path, extension)
         try:
             distance = neighbour_distance(mesh_path)
-        except FileNotFoundError:
-            raise
+        except FileNotFoundError as e:
+            raise e
 
         print(
             "{}: mean distance {:.2f} \u00b1 {:.2f}".format(
@@ -152,8 +152,8 @@ def quality_information(file_path, mesh_name, metric, sim_range, extension):
                 quality_dict[sim_nb] = pf.paraview_quality(
                     mesh_path, QUALITY_METRIC_MAP[metric]
                 )
-            except Exception:
-                raise
+            except Exception as e:
+                raise e
 
             density_data[i] = RES_DICT[f"{mesh_name}_{sim_nb}"]
 
@@ -170,8 +170,8 @@ def quality_information(file_path, mesh_name, metric, sim_range, extension):
                 QUALITY_METRIC_MAP[metric],
             )
 
-        except Exception:
-            raise
+        except Exception as e:
+            raise e
         utils.print_quality(quality_data, metric)
         plots.plot_single_mesh_quality(
             quality_data, QUALITY_METRIC_MAP[metric], mesh_name
