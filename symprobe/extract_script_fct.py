@@ -115,7 +115,7 @@ def cell_fct(dir_path, rng, sim_name, estrus, delimiter):
                 plots.plot_cell_data(V, t, estrus=estrus)
 
         except Exception as e:
-            raise Exception from e
+            raise e
 
 
 def parameter_fct(
@@ -159,7 +159,7 @@ def parameter_fct(
             try:
                 V, t = utils.load_data(data_path, log_path, delimiter)
             except Exception as e:
-                raise Exception from e
+                raise e
 
             if i == 0:
                 # Allocate space for data on the first loop
