@@ -15,7 +15,7 @@ HOME = os.path.expanduser("~")
 BASE = "Documents/phd"
 RESISTANCE = 2000  # Specific resistance
 CONFIG_ENV_VAR = "CHASTE_MODELLING_CONFIG_DIR"
-PTS_DICT = {  # List of points to extract for the scaffolds
+PTS_DICT = {  # List of points to extract for the scaffolds [Ova, Cen, Cvx]
     "uterus_scaffold_1": [195, 265, 329],
     "uterus_scaffold_2": [1088, 1493, 1971],
     "uterus_scaffold_3": [1595, 2192, 2908],
@@ -26,6 +26,10 @@ PTS_DICT = {  # List of points to extract for the scaffolds
     "uterus_scaffold_norm_3": [1595, 2192, 2908],
     "uterus_scaffold_norm_4": [2387, 3824, 4358],
     "uterus_scaffold_norm_5": [3183, 4379, 5813],
+    "AWA026_proestrus_mesh": [38608, 41874, 42446],
+    "AWA033_estrus_mesh": [31768, 9323, 31933],
+    "AWB008_metestrus_mesh": [27499, 27256, 27826],
+    "AWB003_diestrus_mesh": [44899, 44192, 43638],
 }
 RES_DICT = {  # Number of elements in the scaffolds
     "uterus_scaffold_1": 1258,
