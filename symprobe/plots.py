@@ -109,6 +109,36 @@ def plot_parameter_comparison(comp_dict, parameter_values, metric, parameter):
     plt.show()
 
 
+def plot_spike_propagation(spike_dict, parameter_values, parameter):
+    """Plots the number of spikes propagated to the cervix
+
+    Arguments:
+    spike_dict -- dict[np.array], keys are estrus stages and values are
+    spike propagation data.
+    parameter_values, np.array, values of the parameter.
+    parameter -- str, name of the parameter.
+
+    Return:
+
+    Raises:
+
+    """
+    # Create figure and plot
+    fig, ax = plt.subplots(dpi=300)
+
+    for stage, spike_data in spike_dict.items():
+        plt.plot(parameter_values, spike_data, COLOURS[stage] + ".-")
+
+    if len(spike_dict.keys()) != 1:
+        plt.legend([estrus.capitalize() for estrus in spike_dict.keys()])
+
+    plt.xlabel(PARAM[parameter] + " " + UNITS[parameter])
+    plt.ylabel("Number of propagated spikes")
+
+    plt.subplots_adjust(left=LEFT, right=RIGHT, bottom=BOTTOM)
+    plt.show()
+
+
 def plot_single_mesh_quality(quality_data, metric, mesh_name):
     """Plots the quality data for a mesh as a boxplot
 
