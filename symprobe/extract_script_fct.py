@@ -184,12 +184,7 @@ def parameter_fct(
                 time=t,
             )
 
-        comp_data[0] = metrics.compute_comparison(
-            data[:, 0],
-            data[:, 0],
-            metric,
-            time=t,
-        )
+        comp_data[0] = 0.0  # Comparing inital state with initial state
         comp_dict[stage] = comp_data  # Add data to the estrus dict
         spike_dict[stage] = nb_spikes  # Add number of spike to estrus dict
 
