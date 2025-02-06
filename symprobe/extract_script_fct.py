@@ -16,6 +16,9 @@ def resolution_fct(
 ):
     sim_numbers = utils.get_range(rng)
 
+    if type(sim_numbers) is type(int()):
+        sim_numbers = [sim_numbers]
+
     if estrus == "all":
         estrus = constants.ESTRUS
 
