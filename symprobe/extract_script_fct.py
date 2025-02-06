@@ -137,6 +137,7 @@ def parameter_fct(
         estrus = [estrus]
 
     comp_dict = {}  # Create a dictionnary for the data of each stage
+    spike_dict = {}  # Create a dictionnary for spike propagation of each stage
 
     for stage in estrus:
         estrus_path = os.path.join(dir_path, stage + "_" + estrus_dir)
@@ -165,9 +166,11 @@ def parameter_fct(
                 # Allocate space for data on the first loop
                 data = np.zeros((len(V), len(sim_numbers)))
                 param_values = np.zeros(len(sim_numbers))
+                nb_spikes = np.zeros(len(sim_numbers))
 
             data[:, i] = V[:, 0]
             param_values[i] = utils.get_param_value(log_path, parameter)
+            nb_spikes[i] = len(utils.extract_spike_times(V[:, 2], t))
 
         comp_data = np.zeros(len(sim_numbers))
 
@@ -186,5 +189,7 @@ def parameter_fct(
             time=t,
         )
         comp_dict[stage] = comp_data  # Add data to the estrus dict
+        spike_dict[stage] = nb_spikes  # Add number of spike to estrus dict
 
     plots.plot_parameter_comparison(comp_dict, param_values, metric, parameter)
+    plots.plot_spike_propagation(spike_dict, param_values, parameter)
