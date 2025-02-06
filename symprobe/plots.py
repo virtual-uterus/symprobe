@@ -11,7 +11,7 @@ Date: 11/24
 import matplotlib.pyplot as plt
 import numpy as np
 
-from .constants import LEFT, RIGHT, BOTTOM, COLOURS
+from .constants import LEFT, RIGHT, BOTTOM, COLOURS, PARAM, UNITS
 
 
 def plot_cell_data(V, t, estrus="estrus"):
@@ -73,6 +73,37 @@ def plot_resolution_convergence(comp_dict, density_data, metric):
     plt.ylabel("{}".format(metric.upper()))
 
     ax.ticklabel_format(axis="x", style="sci", scilimits=(0, 0))
+
+    plt.subplots_adjust(left=LEFT, right=RIGHT, bottom=BOTTOM)
+    plt.show()
+
+
+def plot_parameter_comparison(comp_dict, parameter_values, metric, parameter):
+    """Plots the convergence for different resolution meshes
+
+    Arguments:
+    comp_dict -- dict[np.array], keys are estrus stages and values are
+    comparison data.
+    parameter_values, np.array, values of the parameter.
+    metric -- str, metric used for the comparison.
+    parameter -- str, name of the parameter.
+
+    Return:
+
+    Raises:
+
+    """
+    # Create figure and plot
+    fig, ax = plt.subplots(dpi=300)
+
+    for stage, comp_data in comp_dict.items():
+        plt.plot(parameter_values, comp_data, COLOURS[stage] + ".-")
+
+    if len(comp_dict.keys()) != 1:
+        plt.legend([estrus.capitalize() for estrus in comp_dict.keys()])
+
+    plt.xlabel(PARAM[parameter] + " " + UNITS[parameter])
+    plt.ylabel("{}".format(metric.upper()))
 
     plt.subplots_adjust(left=LEFT, right=RIGHT, bottom=BOTTOM)
     plt.show()
