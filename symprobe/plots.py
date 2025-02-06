@@ -155,11 +155,20 @@ def plot_single_mesh_quality(quality_data, metric, mesh_name):
     # Create figure and plot
     fig, ax = plt.subplots(dpi=300)
 
-    ax.hist(quality_data, 50)
+    ax.hist(quality_data, 200, color="k")
 
     if metric == "Scaled Jacobian" or metric == "Mean Ratio":
         plt.xlim([0, 1])
 
+    else:
+        # Display other metrics on log scales
+        plt.xscale("log")
+        plt.yscale("log")
+
+    plt.xlabel(f"{metric}")
+    plt.ylabel("Number of elements")
+
+    plt.subplots_adjust(left=LEFT, right=RIGHT, bottom=BOTTOM)
     plt.show()
 
 
