@@ -112,7 +112,7 @@ def cell_fct(dir_path, rng, sim_name, estrus, delimiter):
             V, t = utils.load_data(data_path, log_path, delimiter)
 
             if type(estrus) is type(list()):
-                plots.plot_cell_data(V, t, estrus=estrus[i])
+                plots.plot_cell_data(V, t, estrus=estrus[i - 1])
             else:
                 plots.plot_cell_data(V, t, estrus=estrus)
 
