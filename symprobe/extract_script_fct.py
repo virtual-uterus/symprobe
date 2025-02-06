@@ -91,6 +91,8 @@ def cell_fct(dir_path, rng, sim_name, estrus, delimiter):
     else:
         estrus = estrus
         nb_sims = sim_numbers
+        if type(nb_sims) is type(int()):
+            nb_sims = [nb_sims]
 
     for i in nb_sims:
         current_sim_name = f"{sim_name}_{(i):03}"
