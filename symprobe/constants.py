@@ -77,3 +77,16 @@ COLOURS = {
     "metestrus": "g",
     "diestrus": "k",
 }
+PARAM = {
+    "gkv43": r"g$_{Kv4.3}$",
+    "gcal": r"g$_{CaL}$",
+    "gna": r"g$_{Na}$",
+    "stim_current": r"I$_{stim}$",
+}
+UNITS = {
+    "gkv43": r"nS pF$^{-1}$",
+    "gcal": r"nS pF$^{-1}$",
+    "gkca": r"nS pF$^{-1}$",
+    "gna": r"nS pF$^{-1}$",
+    "stim_current": r"pA pF$^{-1}$",
+}
