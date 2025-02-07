@@ -51,7 +51,8 @@ def add_shared_arguments(parser):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description="Plot tools for extracted data")
+        description="Plot tools for extracted data",
+    )
     subparsers = parser.add_subparsers(
         title="subcommands", description="Available commands", dest="command"
     )
@@ -116,6 +117,39 @@ if __name__ == "__main__":
 
     parameter_parser.set_defaults(func=extract_script_fct.parameter_fct)
 
+    # Subcommand: comparison
+    comparison_parser = subparsers.add_parser(
+        "comparison", help="Compares realistic and idealised meshes outputs"
+    )
+
+    add_shared_arguments(comparison_parser)
+    comparison_parser.add_argument(
+        "metric",
+        type=str,
+        choices={"rmse", "mae", "mse", "vrd"},
+        help="metric used for comparison",
+    )
+    comparison_parser.add_argument(
+        "--realistic-dir",
+        type=str,
+        help="name of the directory containing the realistic extracts",
+        default="realistic",
+    )
+    comparison_parser.add_argument(
+        "--idealised-dir",
+        type=str,
+        help="name of the directory containing the idealised extracts",
+        default="scaffold",
+    )
+    comparison_parser.add_argument(
+        "--sub-dir",
+        type=str,
+        help="name of the subdirectory to find extract folders",
+        default="short",
+    )
+
+    comparison_parser.set_defaults(func=extract_script_fct.comparison_fct)
+
     # Parse input arguments
     args = parser.parse_args()
 
@@ -151,6 +185,18 @@ if __name__ == "__main__":
                 args.parameter,
                 args.estrus_dir,
                 args.metric,
+                args.range,
+                args.sim_name,
+                args.estrus,
+                args.delimiter,
+            )
+        elif args.command == "comparison":
+            args.func(
+                dir_path,
+                args.metric,
+                args.realistic_dir,
+                args.idealised_dir,
+                args.sub_dir,
                 args.range,
                 args.sim_name,
                 args.estrus,
