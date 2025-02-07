@@ -1,5 +1,4 @@
 import os
-import sys
 import numpy as np
 
 from symprobe import utils, plots, constants, metrics
@@ -80,6 +79,39 @@ def _data_extract(sim_name, sim_nb, path, delimiter):
         raise e
 
     return V, t, cell_ids, log_path
+
+
+def _reorder_V(V, cell_ids, ordered_ids):
+    """Reorders V to follow ovaries, centre, cervical end extract
+
+    Arguments:
+    V -- np.array[float], amplitude values of the extracted cells.
+    cell_ids -- np.array[int], cell ids (assume only 3 cells extracted).
+    ordered_ids -- np.array[int], correctly ordered ids.
+
+    Return:
+    ordered_V -- np.array[float], reordered array.
+
+    Raises:
+    ValueError -- if the ordered and unordered ids are not the same length.
+
+    """
+    if len(cell_ids) != len(ordered_ids):
+        raise ValueError("cell ids and ordered ids should have same length.")
+
+    if (cell_ids == ordered_ids).all():
+        # Already in order
+        return V
+
+    ordered_V = np.zeros(V.shape)
+
+    for i, ordered_id in enumerate(ordered_ids):
+        for j, id in enumerate(cell_ids):
+            if id == ordered_id:
+                ordered_V[:, i] = V[:, j]
+
+    return ordered_V
+
 
 def resolution_fct(
     dir_path,
