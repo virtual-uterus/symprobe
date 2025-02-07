@@ -257,3 +257,73 @@ def parameter_fct(
     plots.plot_spike_propagation(spike_dict, param_values, parameter)
 
 
+def comparison_fct(
+    dir_path,
+    metric,
+    realistic_dir,
+    idealised_dir,
+    sub_dir,
+    rng,
+    sim_name,
+    estrus,
+    delimiter,
+):
+    """ """
+    nb_sims, estrus = _fct_setup(rng, estrus)
+
+    for i, stage in enumerate(estrus):
+        idealised_path = os.path.join(dir_path, idealised_dir, sub_dir)
+        realistic_path = os.path.join(dir_path, realistic_dir, sub_dir)
+        comp_data = []
+
+        try:
+            # Get idealised mesh data
+            idealised_V, t, ideal_ids, idealised_log_path = _data_extract(
+                sim_name,
+                i + 1,
+                idealised_path,
+                delimiter,
+            )
+            ideal_ordered_ids = constants.PTS_DICT[
+                utils.get_mesh_name(idealised_log_path)
+            ]
+
+            idealised_V = _reorder_V(  # Reorder to be ova, cen, cvx
+                idealised_V,
+                ideal_ids,
+                ideal_ordered_ids,
+            )
+
+            # Get realistic mesh data
+            realistic_V, t, real_ids, realistic_log_path = _data_extract(
+                sim_name,
+                i + 1,
+                realistic_path,
+                delimiter,
+            )
+            real_ordered_ids = constants.PTS_DICT[
+                utils.get_mesh_name(realistic_log_path)
+            ]
+
+            realistic_V = _reorder_V(  # Reorder to be ova, cen, cvx
+                realistic_V,
+                real_ids,
+                real_ordered_ids,
+            )
+
+        except Exception as e:
+            raise e
+
+        for j in range(idealised_V.shape[1]):
+            comp_data.append(
+                metrics.compute_comparison(
+                    idealised_V[:, j],
+                    realistic_V[:, j],
+                    metric,
+                    time=t,
+                )
+            )
+
+        mean_data = np.mean(comp_data)
+        std_data = np.std(comp_data)
+        print(f"{stage.capitalize()}: {mean_data:.3f} ± {std_data:.3f}")
