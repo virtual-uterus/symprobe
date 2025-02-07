@@ -5,15 +5,21 @@ import numpy as np
 from symprobe import utils, plots, constants, metrics
 
 
-def resolution_fct(
-    dir_path,
-    estrus_dir,
-    metric,
-    rng,
-    sim_name,
-    estrus,
-    delimiter,
-):
+def _fct_setup(rng, estrus):
+    """Setups simulation numbers and estrus cycle for all functions
+
+    Arguments:
+    rng -- int or list[int], range of simulation numbers.
+    estrus -- str, estrus cycle.
+
+    Return:
+    nb_sims -- list[int], list of simulation numbers.
+    estrus -- list[str], list of estrus phases.
+
+    Raises:
+    ValueError -- if the number of simulations does not match with estrus.
+
+    """
     sim_numbers = utils.get_range(rng)
 
     if type(sim_numbers) is type(int()):
@@ -22,11 +28,58 @@ def resolution_fct(
 
         sim_numbers = [sim_numbers]
 
+    if estrus == "all" and len(sim_numbers) != 4:
+        raise ValueError("range must be 4 if estrus is set to all")
+
     if estrus == "all":
         estrus = constants.ESTRUS
+        nb_sims = np.arange(1, 5)
 
     else:
         estrus = [estrus]
+        nb_sims = sim_numbers
+
+    return nb_sims, estrus
+
+
+def _data_extract(sim_name, sim_nb, path, delimiter):
+    """Recuperates the extracted data for a simulation
+
+    Arguments:
+    sim_name -- str, simulation name.
+    sim_nb -- int, simulation number.
+    path -- str, path to the data directory.
+    delimiter -- str, csv file delimiter.
+
+    Return:
+    V -- np.array[float], amplitude values of the extracted cells.
+    t -- np.array[float], timesteps of the extracted cells.
+    cell_ids -- np.array[int], cell ids (assume only 3 cells extracted).
+    log_path -- str, path to the log file.
+
+    Raises:
+    Exception -- if an error occurs during the recuperation process.
+
+    """
+    current_sim_name = f"{sim_name}_{sim_nb:03}"
+
+    data_path = os.path.join(
+        path,
+        "extract",
+        "{}.csv".format(current_sim_name),
+    )
+    log_path = os.path.join(
+        path,
+        "log",
+        "{}.log".format(current_sim_name),
+    )
+
+    try:
+        V, t, cell_ids = utils.load_data(data_path, log_path, delimiter)
+    except Exception as e:
+        raise e
+
+    return V, t, cell_ids, log_path
 
     comp_dict = {}  # Create a dictionnary for the data of each stage
 
