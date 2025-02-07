@@ -124,6 +124,7 @@ def load_data(data_path, log_path, delimiter=","):
     Return:
     V -- ndarray, membrane potential values.
     t -- ndarray, timestep values.
+    cell_ids -- ndarray, cell ids assuming there are only 3 cells extracted.
 
     Raises:
     FileNotFoundError -- if the data file is not found.
@@ -133,7 +134,6 @@ def load_data(data_path, log_path, delimiter=","):
     RuntimeError -- if an error occurs during parsing.
     RuntimeError -- if there was a problem reading the log file
     ValueError -- if the print timestep value is not found or cannot be parsed.
-
     ValueError -- if the required column is missing in the CSV file.
 
     """
@@ -187,7 +187,7 @@ def load_data(data_path, log_path, delimiter=","):
     # Create correct timesteps in seconds
     t = np.linspace(0, (nb_timesteps - 1) * timestep * 1e-3, nb_timesteps)
 
-    return V, t
+    return V, t, cell_ids[0:3]
 
 
 def get_range(num_range):
