@@ -27,12 +27,9 @@ def _fct_setup(rng, estrus):
 
         sim_numbers = [sim_numbers]
 
-    if estrus == "all" and len(sim_numbers) != 4:
-        raise ValueError("range must be 4 if estrus is set to all")
-
     if estrus == "all":
         estrus = constants.ESTRUS
-        nb_sims = np.arange(1, 5)
+        nb_sims = sim_numbers
 
     else:
         estrus = [estrus]
