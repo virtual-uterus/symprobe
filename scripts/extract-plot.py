@@ -23,6 +23,12 @@ def add_shared_arguments(parser):
         help="path from BASE to the data",
     )
     parser.add_argument(
+        "sim_numbers",
+        metavar="sim-numbers",
+        nargs="+",
+        help="range of simulation numbers to plot",
+    )
+    parser.add_argument(
         "--estrus",
         type=str,
         default="all",
@@ -34,12 +40,6 @@ def add_shared_arguments(parser):
         type=str,
         default="simulation",
         help="name of the simulation prefix",
-    )
-    parser.add_argument(
-        "--range",
-        "-r",
-        nargs="+",
-        help="range of mesh numbers for comparison",
     )
     parser.add_argument(
         "--delimiter",
@@ -166,7 +166,7 @@ if __name__ == "__main__":
                 dir_path,
                 args.estrus_dir,
                 args.metric,
-                args.range,
+                args.sim_numbers,
                 args.sim_name,
                 args.estrus,
                 args.delimiter,
@@ -174,7 +174,7 @@ if __name__ == "__main__":
         elif args.command == "cell":
             args.func(
                 dir_path,
-                args.range,
+                args.sim_numbers,
                 args.sim_name,
                 args.estrus,
                 args.delimiter,
@@ -185,7 +185,7 @@ if __name__ == "__main__":
                 args.parameter,
                 args.estrus_dir,
                 args.metric,
-                args.range,
+                args.sim_numbers,
                 args.sim_name,
                 args.estrus,
                 args.delimiter,
@@ -197,7 +197,7 @@ if __name__ == "__main__":
                 args.realistic_dir,
                 args.idealised_dir,
                 args.sub_dir,
-                args.range,
+                args.sim_numbers,
                 args.sim_name,
                 args.estrus,
                 args.delimiter,
