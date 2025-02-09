@@ -37,8 +37,11 @@ def plot_cell_data(V, t, estrus="estrus"):
         fig, ax = plt.subplots(dpi=300)
         plt.plot(t, V[:, j], COLOURS[estrus], linestyle="-")
 
-        plt.xlabel("Time (s)")
-        plt.ylabel("Amplitude (mV)")
+        plt.xlabel("Time (s)", fontsize=15)
+        plt.ylabel("Amplitude (mV)", fontsize=15)
+
+        plt.xticks(fontsize=12)
+        plt.yticks(fontsize=12)
 
         plt.xlim([0, max(t)])
         plt.ylim([-70, 15])
