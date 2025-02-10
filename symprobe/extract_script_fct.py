@@ -119,6 +119,24 @@ def resolution_fct(
     estrus,
     delimiter,
 ):
+    """Plots the comparison metric between meshes at different resolutions
+
+    Arguments:
+    dir_path -- str, path to the directory containing the data.
+    estrus_dir -- str, name of the estrus dependant directory.
+    metric -- str, name of the metric used for comparison.
+    rng -- int or list[int], range of simulation numbers.
+    sim_name -- str, name of the simulation to load data from.
+    estrus -- str, estrus cycle {proestrus, estrus, metestrus, diestrus, all}.
+    delimiter -- str, delimiter in csv file.
+
+    Returns:
+
+    Raises:
+    ValueError -- if the number of simulations does not match with estrus.
+    Exception -- if an error occurs while extracting the data.
+
+    """
     nb_sims, estrus = _fct_setup(rng, estrus)
 
     comp_dict = {}  # Create a dictionnary for the data of each stage
@@ -168,7 +186,22 @@ def resolution_fct(
 
 
 def cell_fct(dir_path, rng, sim_name, estrus, delimiter):
-    """ """
+    """Plots the output of a single cell for different simulations
+
+    Arguments:
+    dir_path -- str, path to the directory containing the data.
+    rng -- int or list[int], range of simulation numbers.
+    sim_name -- str, name of the simulation to load data from.
+    estrus -- str, estrus cycle {proestrus, estrus, metestrus, diestrus, all}.
+    delimiter -- str, delimiter in csv file.
+
+    Returns:
+
+    Raises:
+    ValueError -- if the number of simulations does not match with estrus.
+    Exception -- if an error occurs while extracting the data.
+
+    """
     nb_sims, estrus = _fct_setup(rng, estrus)
 
     for i in nb_sims:
@@ -203,6 +236,26 @@ def parameter_fct(
     estrus,
     delimiter,
 ):
+    """Plots the metric and number of spike propagated to the cervix
+    for simulations with different values of a give parameter
+
+    Arguments:
+    dir_path -- str, path to the directory containing the data.
+    paramter -- str, name of the parameter changed.
+    estrus_dir -- str, name of the estrus dependant directory.
+    metric -- str, name of the metric used for comparison.
+    rng -- int or list[int], range of simulation numbers.
+    sim_name -- str, name of the simulation to load data from.
+    estrus -- str, estrus cycle {proestrus, estrus, metestrus, diestrus, all}.
+    delimiter -- str, delimiter in csv file.
+
+    Returns:
+
+    Raises:
+    ValueError -- if the number of simulations does not match with estrus.
+    Exception -- if an error occurs while extracting the data.
+
+    """
     nb_sims, estrus = _fct_setup(rng, estrus)
 
     comp_dict = {}  # Create a dictionnary for the data of each stage
@@ -265,6 +318,29 @@ def comparison_fct(
     estrus,
     delimiter,
 ):
+    """Prints the comparison metric between simulations using idealised and
+    realistic geometries
+
+    Arguments:
+    dir_path -- str, path to the directory containing the data.
+    metric -- str, name of the metric used for comparison.
+    paramter -- str, name of the parameter changed.
+    realistic_dir -- str, name of the directory with realistic results.
+    idealised_dir -- str, name of the directory with idealised results
+    sub_dir -- str, name of the subdirectory that is common in both types
+    of meshes.
+    rng -- int or list[int], range of simulation numbers.
+    sim_name -- str, name of the simulation to load data from.
+    estrus -- str, estrus cycle {proestrus, estrus, metestrus, diestrus, all}.
+    delimiter -- str, delimiter in csv file.
+
+    Returns:
+
+    Raises:
+    ValueError -- if the number of simulations does not match with estrus.
+    Exception -- if an error occurs while extracting the data.
+
+    """
     """ """
     nb_sims, estrus = _fct_setup(rng, estrus)
 
