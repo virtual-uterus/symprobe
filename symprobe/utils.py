@@ -14,7 +14,7 @@ import numpy as np
 import pandas as pd
 import quantities as quant
 
-from symprobe.constants import CONVERSION_IDX
+from symprobe.constants import CONVERSION_IDX, HORN_LENGTH_DICT
 from scipy.signal import find_peaks
 from neo.core import SpikeTrain
 
@@ -296,3 +296,34 @@ def create_spike_train(spike_times, t_stop):
 
     """
     return SpikeTrain(spike_times * quant.ms, t_stop=t_stop * quant.ms)
+
+
+def estimate_velocity(V, t, mesh_name):
+    """Estimates the propagation velocity between ovarian and cervical end
+    of the horn and prints it to the terminal
+
+    This function assumes that the propagation is from ovaries to cervix.
+
+    Arguments:
+    V -- ndarray, array with data from N cells to be plotted.
+    t -- ndarray, time vector.
+    mesh_name -- str, name of the mesh to extract horn length.
+
+    Returns:
+
+    Raises:
+    ValueError -- if no spikes were found at one of the ends of the horn.
+
+    """
+    cev_spikes = extract_spike_times(V[:, 2], t)
+    ova_spikes = extract_spike_times(V[:, 0], t)
+
+    if len(cev_spikes) == 0:
+        raise ValueError("no spikes found at the cervical end")
+
+    if len(ova_spikes) == 0:
+        raise ValueError("no spikes found at the ovarian end")
+
+    velocity = HORN_LENGTH_DICT[mesh_name] / (cev_spikes[0] - ova_spikes[0])
+
+    print(f"Propagation velocity: {velocity:.2f} mm/s")

@@ -40,6 +40,13 @@ DIST_DICT = {  # Average distance between elements for the scaffolds
     "uterus_scaffold_norm_4": 0.01,
     "uterus_scaffold_norm_5": 0.01,
 }
+HORN_LENGTH_DICT = {  # Lenght of left horn in mm
+    "uterus_scaffold_norm_3": 20,
+    "AWA026_proestrus_mesh": 21,
+    "AWA033_estrus_mesh": 20,
+    "AWB008_metestrus_mesh": 19,
+    "AWB003_diestrus_mesh": 20,
+}
 CONVERSION_IDX = [  # List of node indices for each tetrahedra
     [0, 1, 2, 4],  # Tetrahedron 1
     [0, 2, 3, 4],  # Tetrahedron 2

@@ -217,6 +217,11 @@ def cell_fct(dir_path, rng, sim_name, estrus, delimiter):
 
             V = _reorder_V(V, cell_ids, ordered_ids)
 
+            try:
+                utils.estimate_velocity(V, t, utils.get_mesh_name(log_path))
+            except ValueError as e:
+                print(f"Warning: {e}")
+
             if type(estrus) is type(list()):
                 plots.plot_cell_data(V, t, estrus=estrus[i - 1])
             else:
@@ -263,7 +268,7 @@ def parameter_fct(
 
     for stage in estrus:
         estrus_path = os.path.join(dir_path, stage + "_" + estrus_dir)
-
+        print(f"Estrus stage: {stage}")
         for i, sim_nb in enumerate(nb_sims):
             # Iterate over each simulation
             try:
@@ -288,6 +293,11 @@ def parameter_fct(
             data[:, i] = V[:, 0]
             param_values[i] = utils.get_param_value(log_path, parameter)
             nb_spikes[i] = len(utils.extract_spike_times(V[:, 2], t))
+
+            try:
+                utils.estimate_velocity(V, t, utils.get_mesh_name(log_path))
+            except ValueError as e:
+                print(f"Warning: {e}")
 
         comp_data = np.zeros(len(nb_sims))
 
