@@ -16,32 +16,32 @@ BASE = "Documents/phd"
 RESISTANCE = 2000  # Specific resistance
 CONFIG_ENV_VAR = "CHASTE_MODELLING_CONFIG_DIR"
 PTS_DICT = {  # List of points to extract for the scaffolds [Ova, Cen, Cvx]
-    "uterus_scaffold_norm_1": [195, 265, 329],
-    "uterus_scaffold_norm_2": [1088, 1493, 1971],
-    "uterus_scaffold_norm_3": [1595, 2192, 2908],
-    "uterus_scaffold_norm_4": [2387, 3824, 4358],
-    "uterus_scaffold_norm_5": [3183, 4379, 5813],
+    "uterus_scaffold_scaled_1": [195, 265, 329],
+    "uterus_scaffold_scaled_2": [1088, 1493, 1971],
+    "uterus_scaffold_scaled_3": [1595, 2192, 2908],
+    "uterus_scaffold_scaled_4": [2387, 3824, 4358],
+    "uterus_scaffold_scaled_5": [3183, 4379, 5813],
     "AWA026_proestrus_mesh": [38608, 41874, 42446],
     "AWA033_estrus_mesh": [31768, 9323, 31933],
     "AWB008_metestrus_mesh": [27499, 27256, 27826],
     "AWB003_diestrus_mesh": [44899, 44192, 43638],
 }
 RES_DICT = {  # Number of elements in the scaffolds
-    "uterus_scaffold_norm_1": 1258,
-    "uterus_scaffold_norm_2": 9984,
-    "uterus_scaffold_norm_3": 14976,
-    "uterus_scaffold_norm_4": 22464,
-    "uterus_scaffold_norm_5": 33696,
+    "uterus_scaffold_scaled_1": 1258,
+    "uterus_scaffold_scaled_2": 9984,
+    "uterus_scaffold_scaled_3": 14976,
+    "uterus_scaffold_scaled_4": 22464,
+    "uterus_scaffold_scaled_5": 33696,
 }
 DIST_DICT = {  # Average distance between elements for the scaffolds
-    "uterus_scaffold_norm_1": 0.03,
-    "uterus_scaffold_norm_2": 0.01,
-    "uterus_scaffold_norm_3": 0.01,
-    "uterus_scaffold_norm_4": 0.01,
-    "uterus_scaffold_norm_5": 0.01,
+    "uterus_scaffold_scaled_1": 0.08,
+    "uterus_scaffold_scaled_2": 0.04,
+    "uterus_scaffold_scaled_3": 0.03,
+    "uterus_scaffold_scaled_4": 0.03,
+    "uterus_scaffold_scaled_5": 0.03,
 }
 HORN_LENGTH_DICT = {  # Lenght of left horn in mm
-    "uterus_scaffold_norm_3": 20,
+    "uterus_scaffold_scaled_3": 20,
     "AWA026_proestrus_mesh": 21,
     "AWA033_estrus_mesh": 20,
     "AWB008_metestrus_mesh": 19,
