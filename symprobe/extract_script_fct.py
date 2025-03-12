@@ -204,11 +204,11 @@ def cell_fct(dir_path, rng, sim_name, estrus, delimiter):
     """
     nb_sims, estrus = _fct_setup(rng, estrus)
 
-    for i in nb_sims:
+    for i, sim_num in enumerate(nb_sims):
         try:
             V, t, cell_ids, log_path = _data_extract(
                 sim_name,
-                i,
+                sim_num,
                 dir_path,
                 delimiter,
             )
@@ -223,7 +223,7 @@ def cell_fct(dir_path, rng, sim_name, estrus, delimiter):
                 print(f"Warning: {e}")
 
             if type(estrus) is type(list()):
-                plots.plot_cell_data(V, t, estrus=estrus[i - 1])
+                plots.plot_cell_data(V, t, estrus=estrus[i])
             else:
                 plots.plot_cell_data(V, t, estrus=estrus)
 
