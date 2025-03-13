@@ -97,6 +97,8 @@ def edge_lengths(mesh_path):
 
 
 def distance_information(file_path, mesh_name, sim_range, extension):
+    """Extracts the average distance between elements and the average
+    edge length in a mesh and prints it
 
     Arguments:
     file_path -- str, path to the mesh.
@@ -122,15 +124,24 @@ def distance_information(file_path, mesh_name, sim_range, extension):
 
             try:
                 distance = neighbour_distance(mesh_path)
+                edge_len = edge_lengths(mesh_path)
             except FileNotFoundError as e:
                 raise e
 
             print(
-                "{}_{}: mean distance {:.2f} \u00b1 {:.2f}".format(
+                "{}_{}: mean distance {:.4f} \u00b1 {:.4f}".format(
                     mesh_name,
                     sim_nb,
                     np.mean(distance),
                     np.std(distance),
+                )
+            )
+            print(
+                "{}_{}: mean edge length {:.4f} \u00b1 {:.4f}".format(
+                    mesh_name,
+                    sim_nb,
+                    np.mean(edge_len),
+                    np.std(edge_len),
                 )
             )
 
@@ -138,14 +149,22 @@ def distance_information(file_path, mesh_name, sim_range, extension):
         mesh_path = "{}.{}".format(file_path, extension)
         try:
             distance = neighbour_distance(mesh_path)
+            edge_len = edge_lengths(mesh_path)
         except FileNotFoundError as e:
             raise e
 
         print(
-            "{}: mean distance {:.2f} \u00b1 {:.2f}".format(
+            "{}: mean distance {:.4f} \u00b1 {:.4f}".format(
                 mesh_name,
                 np.mean(distance),
                 np.std(distance),
+            )
+        )
+        print(
+            "{}: mean edge length {:.4f} \u00b1 {:.4f}".format(
+                mesh_name,
+                np.mean(edge_len),
+                np.std(edge_len),
             )
         )
 
