@@ -8,6 +8,8 @@ Author: Mathias Roesler
 Date: 11/24
 """
 
+import meshio
+import itertools
 import numpy as np
 import pyvista as pv
 
@@ -61,8 +63,40 @@ def neighbour_distance(mesh_path):
     return np.array(neighbour_distances)
 
 
+def edge_lengths(mesh_path):
+    """Finds the average edge length of the elements in a volumetric mesh
+
+    Arguments:
+    mesh_path -- str, path to the mesh to load.
+
+    Return:
+    edge_len -- np.array(float), array with the edge length of the elements.
+
+    Raises:
+    FileNotFoundError -- if the mesh is not found.
+
+    """
+    edge_len = []
+    try:
+        mesh = meshio.read(mesh_path)
+
+        elements = mesh.cells_dict["tetra"]  # Assume tetrahedral mesh
+        points = mesh.points
+
+        for ele in elements:
+            coordinates = points[ele]
+            edges = list(itertools.combinations(coordinates, 2))
+
+            for edge in edges:
+                edge_len.append(np.linalg.norm(edge[0] - edge[1]))
+
+    except FileNotFoundError as e:
+        raise e
+
+    return edge_len
+
+
 def distance_information(file_path, mesh_name, sim_range, extension):
-    """Extracts the average distance between elements in a mesh and prints it
 
     Arguments:
     file_path -- str, path to the mesh.
