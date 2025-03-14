@@ -72,7 +72,7 @@ def plot_resolution_convergence(comp_dict, density_data, metric):
 
     plt.legend([estrus.capitalize() for estrus in comp_dict.keys()])
 
-    plt.xlabel("Mesh resolution")
+    plt.xlabel("Number of elements")
     plt.ylabel("{}".format(metric.upper()))
 
     ax.ticklabel_format(axis="x", style="sci", scilimits=(0, 0))
@@ -212,7 +212,7 @@ def plot_multi_mesh_quality(quality_dict, density_data, metric):
         label="Mean ± Std",
     )
 
-    plt.xlabel("Mesh resolution")
+    plt.xlabel("Number of elements")
     plt.ylabel("{}".format(metric))
 
     if metric == "Scaled Jacobian" or metric == "Mean Ratio":
