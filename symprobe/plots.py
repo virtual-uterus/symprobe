@@ -73,7 +73,7 @@ def plot_resolution_convergence(comp_dict, density_data, metric):
     plt.legend([estrus.capitalize() for estrus in comp_dict.keys()])
 
     plt.xlabel("Number of elements")
-    plt.ylabel("{}".format(metric.upper()))
+    plt.ylabel("{} (mV)".format(metric.upper()))
 
     ax.ticklabel_format(axis="x", style="sci", scilimits=(0, 0))
 
