@@ -295,7 +295,7 @@ def create_spike_train(spike_times, t_stop):
     Raises:
 
     """
-    return SpikeTrain(spike_times * quant.ms, t_stop=t_stop * quant.ms)
+    return SpikeTrain(spike_times * quant.s, t_stop=t_stop * quant.s)
 
 
 def estimate_velocity(V, t, mesh_name):
