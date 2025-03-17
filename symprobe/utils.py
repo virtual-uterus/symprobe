@@ -263,7 +263,7 @@ def print_quality(quality_array, metric_name):
     print("90th percentile: {:.4f}".format(np.percentile(quality_array, 90)))
 
 
-def extract_spike_times(signal, time, height=-50):
+def extract_spike_times(signal, time, height=-40):
     """Extract spike times from a signal using peak detection
 
     Args:
