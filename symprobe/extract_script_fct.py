@@ -397,6 +397,7 @@ def comparison_fct(
         except Exception as e:
             raise e
 
+        print(f"{stage.capitalize()}")
         for j in range(idealised_V.shape[1]):
             comp_data.append(
                 metrics.compute_comparison(
@@ -406,7 +407,8 @@ def comparison_fct(
                     time=t,
                 )
             )
+            print(f"  {comp_data[j]:.3f}")
 
         mean_data = np.mean(comp_data)
         std_data = np.std(comp_data)
-        print(f"{stage.capitalize()}: {mean_data:.3f} ± {std_data:.3f}")
+        print(f"  {mean_data:.3f} ± {std_data:.3f}")
