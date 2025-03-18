@@ -351,10 +351,11 @@ def comparison_fct(
     Exception -- if an error occurs while extracting the data.
 
     """
-    """ """
     nb_sims, estrus = _fct_setup(rng, estrus)
 
-    for i, stage in enumerate(estrus):
+    for i, sim_num in enumerate(nb_sims):
+        stage = estrus[i]
+
         idealised_path = os.path.join(dir_path, idealised_dir, sub_dir)
         realistic_path = os.path.join(dir_path, realistic_dir, sub_dir)
         comp_data = []
@@ -363,7 +364,7 @@ def comparison_fct(
             # Get idealised mesh data
             idealised_V, t, ideal_ids, idealised_log_path = _data_extract(
                 sim_name,
-                i + 1,
+                sim_num,
                 idealised_path,
                 delimiter,
             )
@@ -380,7 +381,7 @@ def comparison_fct(
             # Get realistic mesh data
             realistic_V, t, real_ids, realistic_log_path = _data_extract(
                 sim_name,
-                i + 1,
+                sim_num,
                 realistic_path,
                 delimiter,
             )
