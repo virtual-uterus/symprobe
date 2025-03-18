@@ -50,6 +50,45 @@ def plot_cell_data(V, t, estrus="estrus"):
         plt.show()
 
 
+def plot_cell_comparison(V1, V2, t, estrus="estrus"):
+    """Plots the membrane potential of cells from two simulations
+
+    Arguments:
+    V1 -- ndarray, array with data from N cells to be plotted.
+    V2 -- ndarray, array to compare with N cells to be plotted.
+    t -- ndarray, time vector.
+    estrus -- str, estrus phase, default value "estrus".
+
+    Return:
+
+    Raises:
+    ValueError -- if the shapes do not agree.
+
+    """
+    # Create figure and plot
+
+    if not V1.shape[0] == t.shape[0] or not V1.shape[0] == V2.shape[0]:
+        raise ValueError("dimensions must agree.")
+
+    fig, ax = plt.subplots(dpi=300)
+    plt.plot(t, V1, COLOURS[estrus], linestyle="-")
+    plt.plot(t, V2, "grey", linestyle="--")
+
+    plt.xlabel("Time (s)", fontsize=15)
+    plt.ylabel("Amplitude (mV)", fontsize=15)
+
+    plt.xticks(fontsize=12)
+    plt.yticks(fontsize=12)
+
+    plt.xlim([min(t), max(t)])
+    plt.ylim([-70, 15])
+
+    plt.legend(["Idealised", "Realistic"])
+    plt.title(f"{estrus.capitalize()}")
+    plt.subplots_adjust(left=LEFT, right=RIGHT, bottom=BOTTOM)
+    plt.show()
+
+
 def plot_resolution_convergence(comp_dict, density_data, metric):
     """Plots the convergence for different resolution meshes
 
