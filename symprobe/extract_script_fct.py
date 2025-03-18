@@ -348,6 +348,7 @@ def comparison_fct(
 
     Raises:
     ValueError -- if the number of simulations does not match with estrus.
+    ValueError -- if dimensions do not agree for plotting.
     Exception -- if an error occurs while extracting the data.
 
     """
@@ -410,6 +411,15 @@ def comparison_fct(
             )
             print(f"  {comp_data[j]:.3f}")
 
+            try:
+                plots.plot_cell_comparison(
+                    idealised_V[:, j],
+                    realistic_V[:, j],
+                    t,
+                    estrus=stage,
+                )
+            except ValueError as e:
+                raise e
         mean_data = np.mean(comp_data)
         std_data = np.std(comp_data)
         print(f"  {mean_data:.3f} ± {std_data:.3f}")
