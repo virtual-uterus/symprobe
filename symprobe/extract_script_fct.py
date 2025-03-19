@@ -1,3 +1,14 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+extract_script_fct.py
+
+Contains function used for manipulating the extract data
+from uterine simulations
+Author: Mathias Roesler
+Date: 03/25
+"""
+
 import os
 import numpy as np
 
