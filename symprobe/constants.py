@@ -39,20 +39,6 @@ HORN_LENGTH_DICT = {  # Lenght of left horn in mm
     "AWB008_metestrus_mesh": 19,
     "AWB003_diestrus_mesh": 20,
 }
-CONVERSION_IDX = [  # List of node indices for each tetrahedra
-    [0, 1, 2, 4],  # Tetrahedron 1
-    [0, 2, 3, 4],  # Tetrahedron 2
-    [1, 2, 4, 5],  # Tetrahedron 3
-    [2, 3, 4, 7],  # Tetrahedron 4
-    [2, 4, 5, 6],  # Tetrahedron 5
-    [2, 4, 6, 7],  # Tetrahedron 6
-]
-QUALITY_METRIC_MAP = {  # Mapping for quality metrics
-    "ar": "Aspect Ratio",
-    "ja": "Jacobian",
-    "sj": "Scaled Jacobian",
-    "mr": "Mean Ratio",
-}
 ESTRUS = ["proestrus", "estrus", "metestrus", "diestrus"]
 
 # Plot constants
