@@ -11,7 +11,8 @@ Modules:
 - constants: Constants used in the project.
 - paraview_fct: Functions based on the Paraview API.
 - plots: Plotting functions.
+- extract_script_fct: Functions for the plotting the extracted data.
 
 """
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"

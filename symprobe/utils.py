@@ -14,7 +14,7 @@ import numpy as np
 import pandas as pd
 import quantities as quant
 
-from symprobe.constants import CONVERSION_IDX, HORN_LENGTH_DICT
+from symprobe.constants import HORN_LENGTH_DICT
 from scipy.signal import find_peaks
 from neo.core import SpikeTrain
 
@@ -213,54 +213,6 @@ def get_range(num_range):
         num_list = [int(i) for i in num_range]
 
     return num_list
-
-
-def convert_connections(cube_node_list):
-    """Converts the connections of the cubic element to six tetrahedra
-    connections
-
-    Arguments:
-    cube_node_list -- list[int], list of nodes for the cubic element.
-
-    Return:
-    tet_node_list -- list[list[int]], list of the six node lists for the
-            tetrahedral elements.
-
-    """
-    tet_node_list = []
-    for idx_list in CONVERSION_IDX:
-        tet_list = [cube_node_list[idx] for idx in idx_list]
-        tet_node_list.append(tet_list)
-
-    return tet_node_list
-
-
-def print_quality(quality_array, metric_name):
-    """Prints statistical information about the quality metric
-
-    Arguments:
-    quality_array -- np.array, quality data for mesh nodes.
-    metric_name -- str, name of the quality metric.
-
-    Return:
-
-    """
-    print("{} quality data:".format(metric_name))
-    print(
-        "Mean: {:.4f} \u00b1 {:.4f}".format(
-            np.mean(quality_array),
-            np.std(quality_array),
-        )
-    )
-    print(
-        "Min-Max: [{:.4f} - {:.4f}]".format(
-            np.min(quality_array),
-            np.max(quality_array),
-        )
-    )
-    print("10th percentile: {:.4f}".format(np.percentile(quality_array, 10)))
-    print("Median: {:.2f}".format(np.median(quality_array)))
-    print("90th percentile: {:.4f}".format(np.percentile(quality_array, 90)))
 
 
 def extract_spike_times(signal, time, height=-50):
