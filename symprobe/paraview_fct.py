@@ -35,10 +35,10 @@ def paraview_extract(mesh_path, save_path, pts_list):
             registrationName="mesh.vtu",
             FileName=[mesh_path],
         )
-    except FileNotFoundError:
-        raise
-    except Exception:
-        raise
+    except FileNotFoundError as e:
+        raise e
+    except Exception as e:
+        raise e
 
     mesh.PointArrayStatus = ["V"]
 
@@ -122,7 +122,7 @@ def paraview_quality(mesh_path, metric):
 
     Arguments:
     mesh_path -- str, path to the mesh vtu file.
-    metric -- str, quality metric used {Aspect ratio, Jacobian}.
+    metric -- str, quality metric used {Aspect Ratio, Mean Ratio, Jacobian}.
 
     Return:
     quality_data -- np.array, quality data for the given metric.
@@ -154,12 +154,12 @@ def paraview_quality(mesh_path, metric):
             raise ValueError(
                 "unrecognised extension {}\n".format(extension),
             )
-    except FileNotFoundError:
-        raise
-    except ValueError:
-        raise
-    except Exception:
-        raise
+    except FileNotFoundError as e:
+        raise e
+    except ValueError as e:
+        raise e
+    except Exception as e:
+        raise e
 
     # Get active view
     view = ps.GetActiveViewOrCreate("RenderView")
@@ -177,5 +177,5 @@ def paraview_quality(mesh_path, metric):
 
     try:
         return fetch_quality_data(metric, mesh_quality, view)
-    except ValueError:
-        raise
+    except ValueError as e:
+        raise e
