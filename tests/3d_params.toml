@@ -1,0 +1,24 @@
+# General parameters
+save_dir = "monodomain_3d/fibre/scaffold/gcal"
+mesh_name = "test_mesh"
+mesh_dir = "/mesh/uterus/scaffolds/"  # Must end with /
+stimulus_type = "simple"
+orthotropic = true
+
+# Stimulus parameters
+x_stim_start = -3.0
+x_stim_end = 3.0
+y_stim_start = -3.0
+y_stim_end = 3.0
+z_stim_start = 1.75
+z_stim_end = 2.15
+
+# Time paramters in millisec
+sim_duration = 15.0e3
+ode_timestep = 1.0
+pde_timestep = 1.0
+print_timestep = 2.0
+
+# Cell parameters
+cell_type = "Roesler"
+estrus = "diestrus"
