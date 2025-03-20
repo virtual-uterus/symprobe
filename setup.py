@@ -11,7 +11,7 @@ def read_requirements():
 
 setup(
     name="symprobe",
-    version="0.1.1",
+    version="0.1.2",
     description="A Python package for extracting, visualising,"
     " and performing multiple"
     " numerical simulations.",
