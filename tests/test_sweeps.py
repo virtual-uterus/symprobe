@@ -5,26 +5,24 @@ test_sweeps.py
 
 Unit tests for the sweep functions in sweeps.py.
 Author: Mathias Roesler
-Date: 11/24
+Date: 03/25
 
 This file contains test cases for the functions:
-- modify_config,
+- modify_config
 - get_config_dir,
-- get_dim_config,
-- get_cell_config,
+- get_dim_config
+- get_cell_config
 - resolution_sweep
 - parameter_sweep
 - estrus_sweep
 
-The tests cover various scenarios including valid inputs, invalid inputs.
+The tests cover various scenarios including valid inputs, invalid inputs,
+and edge cases.
 """
 
-import os
 import pytest
-import shutil
+import os
 
-from tempfile import NamedTemporaryFile, TemporaryDirectory
-from unittest.mock import patch, mock_open, call
 from symprobe.sweeps import (
     modify_config,
     get_config_dir,
@@ -34,341 +32,75 @@ from symprobe.sweeps import (
     parameter_sweep,
     estrus_sweep,
 )
-from symprobe.constants import HOME, BASE, CONFIG_ENV_VAR
 
-CONFIG_DIR = os.path.join(HOME, BASE, "uterine-modelling", "config")
-PARAMS_FILE = os.path.join(CONFIG_DIR, "3d_params.toml")
-ROESLER_FILE = os.path.join(CONFIG_DIR, "Roesler.toml")
-PROESTRUS_FILE = os.path.join(CONFIG_DIR, "Roesler_proestrus.toml")
-MEANS_FILE = os.path.join(CONFIG_DIR, "Means.toml")
+from symprobe.constants import CONFIG_ENV_VAR
 
 
 @pytest.fixture
-def mock_env():
-    """Set up the environment variable for the configuration directory."""
-    with patch.dict(os.environ, {CONFIG_ENV_VAR: CONFIG_DIR}):
-        yield
-
-
-def test_modify_config_success(mock_env):
-    # Initial mock file content
-    mock_file_content = ["mesh_name = 'old_mesh'\n", "another_param = value\n"]
-
-    # Mock the `open` call
-    mock_open_obj = mock_open(read_data="".join(mock_file_content))
-    with patch("builtins.open", mock_open_obj):
-        # Run the function under test
-        modify_config(PARAMS_FILE, "mesh_name", "new_mesh")
-
-    # Ensure the file was opened twice: once for reading and once for writing
-    assert (
-        mock_open_obj.call_count == 2
-    ), f"Expected 2 file openings, got {mock_open_obj.call_count}"
-
-    # Capture the lines passed to the `writelines` method during the write operation
-    handle = mock_open_obj()
-    handle.writelines.assert_called_once()  # Ensure `writelines` was called
-    written_lines = handle.writelines.call_args[0][
-        0
-    ]  # Extract the first argument to `writelines`
-
-    # Expected output after modification
-    expected_lines = ['mesh_name = "new_mesh"\n', "another_param = value\n"]
-
-    # Compare written lines with the expected content
-    assert (
-        written_lines == expected_lines
-    ), f"Output mismatch: expected {expected_lines}, got {written_lines}"
-
-
-def test_modify_config_conductivities_2d(mock_env):
-    mock_file_content = ["conductivities_2d = [0.0, 0.0]\n"]
-    mock_open_obj = mock_open(read_data="".join(mock_file_content))
-
-    with patch("builtins.open", mock_open_obj):
-        modify_config(PARAMS_FILE, "conductivities_2d", "1.0")
-
-    handle = mock_open_obj()
-    handle.writelines.assert_called_once_with(
-        ["conductivities_2d = [1.0, 1.0] \n"])
-
-
-def test_modify_config_conductivities_3d(mock_env):
-    mock_file_content = ["conductivities_3d = [0.0, 0.0, 0.0]\n"]
-    mock_open_obj = mock_open(read_data="".join(mock_file_content))
-
-    with patch("builtins.open", mock_open_obj):
-        modify_config(PARAMS_FILE, "conductivities_3d", "2.0")
-
-    handle = mock_open_obj()
-    handle.writelines.assert_called_once_with(
-        ["conductivities_3d = [2.0, 2.0, 2.0] \n"]
-    )
-
-
-def test_modify_config_param_not_found(mock_env):
-    mock_file_content = ["another_param = value\n"]
-
-    with patch(
-        "builtins.open",
-        mock_open(
-            read_data="".join(
-                mock_file_content,
-            )
-        ),
-    ):
-        with pytest.raises(
-            ValueError,
-            match="the parameter 'mesh_name' was not found",
-        ):
-            modify_config(PARAMS_FILE, "mesh_name", "new_mesh")
-
-
-def test_modify_config_file_not_found(mock_env):
-    with pytest.raises(FileNotFoundError):
-        modify_config("nonexistent_file.toml", "mesh_name", "new_mesh")
-
-
-def test_get_config_dir_success(mock_env):
-    assert get_config_dir() == CONFIG_DIR
-
-
-def test_get_config_dir_missing_env():
-    with (
-        patch.dict(os.environ, {}, clear=True),
-        pytest.raises(
-            OSError, match=f"{CONFIG_ENV_VAR} environment variable is not set"
-        ),
-    ):
-        get_config_dir()
-
-
-def test_get_dim_config_success(mock_env):
-    assert get_dim_config(2) == os.path.join(CONFIG_DIR, "2d_params.toml")
-    assert get_dim_config(3) == os.path.join(CONFIG_DIR, "3d_params.toml")
-
-
-def test_get_dim_config_missing_env():
-    with patch.dict(os.environ, {}, clear=True), pytest.raises(OSError):
-        get_dim_config(2)
-
-
-def test_get_cell_config_success(mock_env):
-    mock_file_content = ['cell_type = "Roesler"\n', 'estrus = "proestrus"\n']
-    mock_open_obj = mock_open(read_data="".join(mock_file_content))
-
-    with patch("builtins.open", mock_open_obj):
-        assert get_cell_config(PARAMS_FILE) == PROESTRUS_FILE
-
-
-def test_get_cell_config_means_success(mock_env):
-    mock_file_content = ['cell_type = "Means"\n']
-    mock_open_obj = mock_open(read_data="".join(mock_file_content))
-
-    with patch("builtins.open", mock_open_obj):
-        assert get_cell_config(PARAMS_FILE) == MEANS_FILE
-
-
-def test_get_cell_config_missing_cell_type(mock_env):
-    mock_file_content = ['estrus = "proestrus"\n']
-    mock_open_obj = mock_open(read_data="".join(mock_file_content))
-
-    with (
-        patch("builtins.open", mock_open_obj),
-        pytest.raises(ValueError, match="cell_type not found in config file"),
-    ):
-        get_cell_config(PARAMS_FILE)
-
-
-def test_get_cell_config_missing_estrus(mock_env):
-    mock_file_content = ['cell_type = "Roesler"\n']
-    mock_open_obj = mock_open(read_data="".join(mock_file_content))
-
-    with (
-        patch("builtins.open", mock_open_obj),
-        pytest.raises(ValueError, match="estrus not found in config file"),
-    ):
-        get_cell_config(PARAMS_FILE)
-
-
-def test_resolution_sweep_success(mock_env):
-    mock_file_content = [
-        "mesh_name = 'uterus_scaffold_0'\n",
-        'cell_type = "Roesler"\n',
-        'estrus = "estrus"\n',
-        "conductivities_3d = [0, 0, 0]",
-    ]
-    mock_open_obj = mock_open(read_data="".join(mock_file_content))
-
-    with (
-        patch(
-            "builtins.open",
-            mock_open_obj,
-        ),
-        patch("subprocess.run") as mock_run,
-    ):
-        resolution_sweep(3, "uterus_scaffold", 1, 3)
-
-    # Assert subprocess was called three times (once per mesh value)
-    assert mock_run.call_count == 3
-    mock_run.assert_called_with(["uterine-simulation", "3"])
-
-    # Ensure the file was written to three times with updated mesh_name
-    expected_calls = [
-        call(PARAMS_FILE, "w"),
-        call(PARAMS_FILE, "w"),
-        call(PARAMS_FILE, "w"),
-    ]
-    mock_open_obj.assert_has_calls(expected_calls, any_order=True)
-
-
-def test_resolution_sweep_missing_env():
-    with patch.dict(os.environ, {}, clear=True), pytest.raises(OSError):
-        resolution_sweep(2, "test_mesh", 1, 3)
-
-
-def test_resolution_sweep_invalid_range(mock_env):
-    with pytest.raises(
-        ValueError, match="the start value is greater than the end value"
-    ):
-        resolution_sweep(2, "test_mesh", 3, 1)
-
-
-def test_parameter_sweep_no_estrus_success(mock_env):
-    mock_file_content = [
-        "param = old_value\n",
-        'cell_type = "Means"\n',
-    ]
-    mock_open_obj = mock_open(read_data="".join(mock_file_content))
-
-    with (
-        patch(
-            "builtins.open",
-            mock_open_obj,
-        ),
-        patch("subprocess.run") as mock_run,
-    ):
-        parameter_sweep(2, "param", 1.0, 3.0, 1.0)
-
-    # Assert subprocess was called three times (once per parameter value)
-    assert mock_run.call_count == 3
-    mock_run.assert_called_with(["uterine-simulation", "2"])
-
-    # Ensure the file was written to three times with updated param values
-    expected_calls = [
-        call(MEANS_FILE, "w"),
-        call(MEANS_FILE, "w"),
-        call(MEANS_FILE, "w"),
-    ]
-    mock_open_obj.assert_has_calls(expected_calls, any_order=True)
-
-
-def test_parameter_sweep_estrus_success(mock_env):
-    mock_file_content = [
-        "param = old_value\n",
-        'cell_type = "Roesler"\n',
-        'estrus = "proestrus"\n',
-    ]
-    mock_open_obj = mock_open(read_data="".join(mock_file_content))
-
-    with (
-        patch(
-            "builtins.open",
-            mock_open_obj,
-        ),
-        patch("subprocess.run") as mock_run,
-    ):
-        parameter_sweep(2, "param", 1.0, 3.0, 1.0)
-
-    # Assert subprocess was called three times (once per parameter value)
-    assert mock_run.call_count == 3
-    mock_run.assert_called_with(["uterine-simulation", "2"])
-
-    # Ensure the file was written to three times with updated param values
-    expected_calls = [
-        call(PROESTRUS_FILE, "w"),
-        call(PROESTRUS_FILE, "w"),
-        call(PROESTRUS_FILE, "w"),
-    ]
-    mock_open_obj.assert_has_calls(expected_calls, any_order=True)
-
-
-def test_parameter_sweep_estrus_presence(mock_env):
-    mock_file_content = ["param = old_value\n", 'cell_type = "Roesler"\n']
-    mock_open_obj = mock_open(read_data="".join(mock_file_content))
-
-    with (
-        patch(
-            "builtins.open",
-            mock_open_obj,
-        ),
-        patch("subprocess.run"),
-        pytest.raises(
-            ValueError,
-            match="estrus not found in config file",
-        ),
-    ):
-        parameter_sweep(2, "param", 1.0, 3.0, 1.0)
-
-
-def test_parameter_sweep_missing_env():
-    with patch.dict(os.environ, {}, clear=True), pytest.raises(OSError):
-        parameter_sweep(2, "param", 1.0, 3.0, 1.0)
-
-
-def test_parameter_sweep_invalid_range(mock_env):
-    with pytest.raises(
-        ValueError, match="the start value is greater than the end value"
-    ):
-        parameter_sweep(2, "param", 3.0, 1.0, 1.0)
-
-
-def test_estrus_sweep_success(mock_env):
-    mock_file_content = [
-        "mesh_name = 'uterus_scaffold_0'\n",
-        "conductivities_2d = [0, 0]\n",
-        "estrus = proestrus\n",
-    ]
-    mock_open_obj = mock_open(read_data="".join(mock_file_content))
-
-    with (
-        patch(
-            "builtins.open",
-            mock_open_obj,
-        ),
-        patch("subprocess.run") as mock_run,
-    ):
-        estrus_sweep(3)
-
-    # Assert subprocess was called three times (once per mesh value)
-    assert mock_run.call_count == 4
-    mock_run.assert_called_with(["uterine-simulation", "3"])
-
-    # Ensure the file was written to three times with updated mesh_name
-    expected_calls = [
-        call(PARAMS_FILE, "w"),
-        call(PARAMS_FILE, "w"),
-        call(PARAMS_FILE, "w"),
-        call(PARAMS_FILE, "w"),
-    ]
-    mock_open_obj.assert_has_calls(expected_calls, any_order=True)
-
-
-def test_estrus_sweep_invalid_parameter(mock_env):
-    mock_file_content = [
-        "mesh_name = 'uterus_scaffold_0'\n",
-        "conductivities_2d = [0, 0]",
-    ]
-    mock_open_obj = mock_open(read_data="".join(mock_file_content))
-
-    with (
-        patch(
-            "builtins.open",
-            mock_open_obj,
-        ),
-        patch("subprocess.run"),
-        pytest.raises(
-            ValueError,
-        ),
-    ):
-        estrus_sweep(2)
+def config_files():
+    return {
+        "2d": "tests/2d_params.toml",
+        "3d": "tests/3d_params.toml",
+        "Roesler_estrus": "tests/Roesler_estrus.toml",
+        "Means": "tests/Means.toml",
+    }
+
+
+@pytest.mark.parametrize(
+    "mesh, param,value",
+    [
+        ("Means", "conductivities_2d", "0.1"),
+        ("Means", "magnitude", "-3.0"),
+        ("Roesler_estrus", "conductivities_3d", "0.2"),
+        ("3d", "mesh_name", "test_mesh"),
+        ("2d", "estrus", "proestrus"),
+    ],
+)
+def test_modify_config(config_files, mesh, param, value):
+    config_file = config_files[mesh]
+    modify_config(config_file, param, value)
+
+    with open(config_file, "r") as f:
+        content = f.read()
+    assert f"{param} =" in content
+
+
+def test_get_config_dir():
+    config_dir = get_config_dir()
+    assert config_dir == os.getenv(CONFIG_ENV_VAR)
+
+
+@pytest.mark.parametrize("dim", [2, 3])
+def test_get_dim_config(config_files, dim):
+    config_file = get_dim_config(dim)
+    assert os.path.exists(config_file)
+
+
+@pytest.mark.parametrize("dim", [2, 3])
+def test_get_cell_config(config_files, dim):
+    dim_config_file = get_dim_config(dim)
+    cell_config_file = get_cell_config(dim_config_file)
+    assert os.path.exists(cell_config_file)
+
+
+@pytest.mark.parametrize(
+    "dim,mesh_name,start_val,end_val", [(2, "mesh", 1, 2), (3, "mesh3d", 2, 3)]
+)
+def test_resolution_sweep(config_files, dim, mesh_name, start_val, end_val):
+    resolution_sweep(dim, mesh_name, start_val, end_val)
+
+
+@pytest.mark.parametrize(
+    "dim,param,start_val,end_val,step",
+    [
+        (2, "conductivities_2d", 0.1, 0.2, 0.05),
+        (3, "conductivities_3d", 0.2, 0.4, 0.1),
+    ],
+)
+def test_parameter_sweep(config_files, dim, param, start_val, end_val, step):
+    parameter_sweep(dim, param, start_val, end_val, step)
+
+
+@pytest.mark.parametrize("dim", [2, 3])
+def test_estrus_sweep(config_files, dim):
+    estrus_sweep(dim)

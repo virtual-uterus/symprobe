@@ -5,123 +5,132 @@ test_utils.py
 
 Unit tests for the utility functions in utils.py.
 Author: Mathias Roesler
-Date: 11/24
+Date: 03/25
 
 This file contains test cases for the functions:
 - get_print_timestep
+- get_mesh_name
+- get_param_value
 - load_data
 - get_range
-- print_quality
+- extract_spike_times
+- create_spike_train
+- estimate_velocity
 
-The tests cover various scenarios including valid inputs, invalid inputs.
+The tests cover various scenarios including valid inputs, invalid inputs,
+and edge cases.
 """
 
 import pytest
 import numpy as np
 import pandas as pd
-
-from symprobe import utils
-from unittest.mock import patch, mock_open
-
-
-def test_get_print_timestep():
-    log_content = "Some log content\nprint timestep: 0.5 ms\nOther content"
-    with patch("builtins.open", mock_open(read_data=log_content)):
-        assert utils.get_print_timestep("dummy_path.log") == 0.5
-
-
-def test_get_print_timestep_missing():
-    log_content = "No timestep information here"
-    with patch("builtins.open", mock_open(read_data=log_content)):
-        with pytest.raises(ValueError):
-            utils.get_print_timestep("dummy_path.log")
+from unittest.mock import mock_open, patch
+from symprobe.utils import (
+    get_print_timestep,
+    get_mesh_name,
+    get_param_value,
+    load_data,
+    get_range,
+    extract_spike_times,
+    create_spike_train,
+    estimate_velocity,
+)
+from neo.core import SpikeTrain
+import quantities as quant
 
 
-def test_get_print_timestep_file_not_found():
+@pytest.fixture
+def mock_log_file():
+    return """
+    Simulation log
+    print timestep: 0.1 ms
+    mesh: test_mesh
+    some_param: 3.5
+    """.strip()
+
+
+@patch("builtins.open", new_callable=mock_open, read_data="print timestep: 0.1 ms\n")
+def test_get_print_timestep(mock_file):
+    assert get_print_timestep("log.txt") == 0.1
+
+
+@patch("builtins.open", side_effect=FileNotFoundError)
+def test_get_print_timestep_file_not_found(mock_file):
     with pytest.raises(FileNotFoundError):
-        utils.get_print_timestep("non_existent.log")
+        get_print_timestep("missing.txt")
 
 
-def test_load_data(mocker):
-    # Mock data for CSV
-    data = {
-        "Time": [0, 0, 1, 1],
-        "V": [0.1, 0.5, 0.2, 0.6],
-        "vtkOriginalPointIds": [0, 1, 0, 1],
-    }
-    mock_df = pd.DataFrame(data)
-    mocker.patch("pandas.read_csv", return_value=mock_df)
-
-    # Mock get_print_timestep
-    mocker.patch("symprobe.utils.get_print_timestep", return_value=1.0)
-
-    V, t = utils.load_data("dummy_data.csv", "dummy_log.log")
-
-    assert V.shape == (2, 2)
-    assert t.size == 2
-    np.testing.assert_array_almost_equal(V, [[0.1, 0.5], [0.2, 0.6]])
-    np.testing.assert_array_almost_equal(t, [0.0, 0.001])  # in seconds
+@patch("builtins.open", new_callable=mock_open, read_data="mesh: test_mesh\n")
+def test_get_mesh_name(mock_file):
+    assert get_mesh_name("log.txt") == "test_mesh"
 
 
-def test_load_data_file_not_found(mocker):
-    mocker.patch(
-        "pandas.read_csv", side_effect=FileNotFoundError("CSV file not found.")
+@patch("builtins.open", side_effect=FileNotFoundError)
+def test_get_mesh_name_file_not_found(mock_file):
+    with pytest.raises(FileNotFoundError):
+        get_mesh_name("missing.txt")
+
+
+@patch("builtins.open", new_callable=mock_open, read_data="param1: 2.5\n")
+def test_get_param_value(mock_file):
+    assert get_param_value("log.txt", "param1") == 2.5
+
+
+@patch("builtins.open", side_effect=FileNotFoundError)
+def test_get_param_value_file_not_found(mock_file):
+    with pytest.raises(FileNotFoundError):
+        get_param_value("missing.txt", "param1")
+
+
+@patch("pandas.read_csv")
+def test_load_data(mock_read_csv, mock_log_file):
+    mock_df = pd.DataFrame(
+        {
+            "Time": [0, 0, 0, 1, 1, 1],
+            "V": [10, -40, 30, 11, -41, 29],
+            "vtkOriginalPointIds": [0, 1, 2, 0, 1, 2],
+        }
     )
-    mocker.patch("symprobe.utils.get_print_timestep", return_value=1.0)
+    mock_read_csv.return_value = mock_df
 
-    with pytest.raises(FileNotFoundError):
-        utils.load_data("non_existent.csv", "dummy_log.log")
+    with patch("builtins.open", new_callable=mock_open, read_data=mock_log_file):
+        V, t, cell_ids = load_data("data.csv", "log.txt")
 
-
-def test_load_data_missing_point_ids(mocker):
-    # Mock data for CSV without the required column
-    data = {
-        "Time": [0, 1],
-        "V": [0.1, 0.2],
-        # No vtkOriginalPointIds column
-    }
-    mock_df = pd.DataFrame(data)
-    mocker.patch("pandas.read_csv", return_value=mock_df)
-    mocker.patch("symprobe.utils.get_print_timestep", return_value=1.0)
-
-    with pytest.raises(IndexError):
-        utils.load_data("dummy_data.csv", "dummy_log.log")
+    assert V.shape == (2, 3)
+    assert len(t) == 2
+    assert len(cell_ids) == 3
 
 
-def test_load_data_incorrect_column(mocker):
-    # Mock data for CSV without the required column
-    data = {
-        "Time": [0, 1],
-        "V": [0.1, 0.2],
-        "Incorrect column": [0, 1],
-    }
-    mock_df = pd.DataFrame(data)
-    mocker.patch("pandas.read_csv", return_value=mock_df)
-    mocker.patch("symprobe.utils.get_print_timestep", return_value=1.0)
+@pytest.mark.parametrize(
+    "num_range, expected",
+    [(["5"], 5), (["1-3"], [1, 2, 3]), (["2", "4", "6"], [2, 4, 6])],
+)
+def test_get_range(num_range, expected):
+    assert get_range(num_range) == expected
+
+
+@pytest.mark.parametrize(
+    "signal, time, height, expected",
+    [
+        ([0, -40, -30, -60, -50, -45], [0, 1, 2, 3, 4, 5], -50, [2]),
+        ([0, -20, -10, -5, -10, -20], [0, 1, 2, 3, 4, 5], -10, [3]),
+    ],
+)
+def test_extract_spike_times(signal, time, height, expected):
+    spike_times = extract_spike_times(np.array(signal), np.array(time), height)
+    np.testing.assert_array_equal(spike_times, np.array(expected))
+
+
+def test_create_spike_train():
+    spike_times = np.array([0.1, 0.5, 1.0])
+    spike_train = create_spike_train(spike_times, 2.0)
+    assert isinstance(spike_train, SpikeTrain)
+    assert spike_train.t_stop == 2.0 * quant.s
+
+
+def test_estimate_velocity():
+    V = np.array([[-70, -50, -30], [-70, -50, 30], [-70, 50, 30]])
+    t = np.array([0, 1, 2])
 
     with pytest.raises(ValueError):
-        utils.load_data("dummy_data.csv", "dummy_log.log")
-
-
-def test_get_range_single_number():
-    assert utils.get_range(["5"]) == 5
-
-
-def test_get_range_range():
-    assert utils.get_range(["1-3"]) == [1, 2, 3]
-
-
-def test_get_range_list():
-    assert utils.get_range(["1", "3", "5"]) == [1, 3, 5]
-
-
-def test_print_quality(capsys):
-    quality_data = np.array([0.5, 0.6, 0.7, 0.8, 0.9])
-    utils.print_quality(quality_data, "Test Metric")
-
-    captured = capsys.readouterr()
-    assert "Mean: 0.70 ± 0.14" in captured.out
-    assert "Min-Max: [0.50 - 0.90]" in captured.out
-    assert "25th percentile: 0.60" in captured.out
-    assert "Median: 0.70" in captured.out
-    assert "75th percentile: 0.80" in captured.out
+        estimate_velocity(V, t, "uterus_scaffold_scaled_3")

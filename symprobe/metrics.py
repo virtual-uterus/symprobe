@@ -109,7 +109,21 @@ def compute_van_rossum_distance(y_true, y_pred, time, tau=1.0):
 
     Returns:
     distance -- float, Van Rossum distance.
+
+    Raises:
+
     """
+    if y_true.ndim != 1 or y_pred.ndim != 1:
+        raise ValueError("array should be 1D")
+
+    if len(time) == 0:
+        raise ValueError("time array should be 1D")
+
+    try:
+        check_broadcasting(y_true, y_pred)
+    except ValueError as e:
+        raise e
+
     st_true = symprobe.utils.create_spike_train(
         symprobe.utils.extract_spike_times(y_true, time),
         time[-1],

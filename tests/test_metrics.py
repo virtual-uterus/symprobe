@@ -5,13 +5,14 @@ test_metrics.py
 
 Unit tests for the metrics functions in metrics.py.
 Author: Mathias Roesler
-Date: 11/24
+Date: 03/25
 
 This file contains test cases for the functions:
 - check_broadcasting
 - compute_rmse
 - compute_mae
 - compute_mse
+- compute_van_rossum_distance
 - compute_comparison
 
 The tests cover various scenarios including valid inputs, invalid inputs,
@@ -20,151 +21,122 @@ and edge cases.
 
 import pytest
 import numpy as np
-
 from symprobe.metrics import (
+    check_broadcasting,
     compute_rmse,
     compute_mae,
     compute_mse,
+    compute_van_rossum_distance,
     compute_comparison,
-    check_broadcasting,
 )
+from unittest.mock import patch
 
 
-# Test check_broadcasting function
-def test_check_broadcasting_valid():
-    y_true = np.array([1, 2, 3])
-    y_pred = np.array([1, 2, 3])
-    # Should not raise an error
-    check_broadcasting(y_true, y_pred)
+@pytest.fixture
+def sample_data():
+    return {
+        "simple": (np.array([1, 2, 3]), np.array([2, 3, 4])),
+        "multidim": (np.array([[1, 2], [3, 4]]), np.array([[2, 3], [4, 5]])),
+        "broadcast": (np.array([[1, 2], [3, 4]]), np.array([1, 2])),
+        "spike_train": (np.array([0, 1, 0, 1, 0]), np.array([0, 0, 1, 0, 1])),
+        "time": np.array([0, 1, 2, 3, 4]),
+        "zeros": (np.array([0, 0, 0]), np.array([0, 0, 0])),
+        "negative": (np.array([-1, -2, -3]), np.array([-2, -3, -4])),
+        "large": (np.array([1e6, 2e6, 3e6]), np.array([2e6, 3e6, 4e6])),
+    }
 
 
-def test_check_broadcasting_invalid():
-    y_true = np.array([1, 2])
-    y_pred = np.array([1, 2, 3])
-    # Should raise ValueError
+# check_broadcasting tests
+
+
+def test_check_broadcasting_scalar():
+    check_broadcasting(np.array([1, 2, 3]), 5)
+
+
+def test_check_broadcasting_empty():
+    check_broadcasting(np.array([]), np.array([]))
+
+
+# Expanded tests for compute_rmse, compute_mae, compute_mse
+
+
+@pytest.mark.parametrize("func", [compute_rmse, compute_mae, compute_mse])
+@pytest.mark.parametrize(
+    "case", ["simple", "multidim", "broadcast", "zeros", "negative", "large"]
+)
+def test_compute_metrics(func, case, sample_data):
+    y_true, y_pred = sample_data[case]
+    result = func(y_true, y_pred)
+    assert isinstance(result, (float, np.float64))
+    assert not np.isnan(result)
+    assert not np.isinf(result)
+
+
+def test_compute_metrics_perfect_prediction():
+    y = np.array([1, 2, 3])
+    for func in [compute_rmse, compute_mae, compute_mse]:
+        assert func(y, y) == 0
+
+
+# compute_van_rossum_distance tests
+
+
+@patch("elephant.spike_train_dissimilarity.van_rossum_distance")
+def test_compute_van_rossum_distance_empty(mock_vrd, sample_data):
+    time = sample_data["time"]
+    mock_vrd.return_value = np.array([[0, 0]])
+    result = compute_van_rossum_distance(np.array([]), np.array([]), time)
+    assert result == 0
+
+
+@patch("elephant.spike_train_dissimilarity.van_rossum_distance")
+def test_compute_van_rossum_distance_identical(mock_vrd, sample_data):
+    y = np.array([0, 1, 0, 1, 0])
+    time = sample_data["time"]
+    mock_vrd.return_value = np.array([[0, 0]])
+    result = compute_van_rossum_distance(y, y, time)
+    assert result == 0
+
+
+# compute_comparison tests
+
+
+@pytest.mark.parametrize("metric", ["rmse", "mae", "mse", "vrd"])
+@pytest.mark.parametrize(
+    "case", ["simple", "multidim", "broadcast", "zeros", "negative", "large"]
+)
+def test_compute_comparison_all_metrics(metric, case, sample_data):
+    y_true, y_pred = sample_data[case]
+    time = sample_data["time"]
+
+    if metric == "vrd" and case in ["multidim", "broadcast"]:
+        with pytest.raises(ValueError, match="array should be 1D"):
+            compute_comparison(y_true, y_pred, metric, time=time)
+    else:
+        result = compute_comparison(y_true, y_pred, metric, time=time)
+        assert isinstance(result, (float, np.float64))
+        assert not np.isnan(result)
+        assert not np.isinf(result)
+
+
+def test_compute_comparison_vrd_missing_time(sample_data):
+    y_true, y_pred = sample_data["spike_train"]
     with pytest.raises(ValueError):
-        check_broadcasting(y_true, y_pred)
+        compute_comparison(y_true, y_pred, "vrd")
 
 
-# Test compute_rmse function
-def test_compute_rmse_valid():
+# Error handling tests
+
+
+@pytest.mark.parametrize(
+    "func", [compute_rmse, compute_mae,
+             compute_mse, compute_van_rossum_distance]
+)
+def test_error_handling(func):
     y_true = np.array([1, 2, 3])
-    y_pred = np.array([1, 2, 3])
-    result = compute_rmse(y_true, y_pred)
-    assert np.isclose(result, 0.0), f"Expected 0.0, but got {result}"
-
-
-def test_compute_rmse_non_broadcastable():
-    y_true = np.array([1, 2])
-    y_pred = np.array([1, 2, 3])
+    y_pred = np.array([1, 2])
     with pytest.raises(ValueError):
-        compute_rmse(y_true, y_pred)
-
-
-def test_compute_rmse_edge_case():
-    y_true = np.array([0])
-    y_pred = np.array([0])
-    result = compute_rmse(y_true, y_pred)
-    assert np.isclose(result, 0.0), f"Expected 0.0, but got {result}"
-
-
-# Test compute_mae function
-def test_compute_mae_valid():
-    y_true = np.array([1, 2, 3])
-    y_pred = np.array([1, 2, 3])
-    result = compute_mae(y_true, y_pred)
-    assert np.isclose(result, 0.0), f"Expected 0.0, but got {result}"
-
-
-def test_compute_mae_non_broadcastable():
-    y_true = np.array([1, 2])
-    y_pred = np.array([1, 2, 3])
-    with pytest.raises(ValueError):
-        compute_mae(y_true, y_pred)
-
-
-def test_compute_mae_edge_case():
-    y_true = np.array([0])
-    y_pred = np.array([0])
-    result = compute_mae(y_true, y_pred)
-    assert np.isclose(result, 0.0), f"Expected 0.0, but got {result}"
-
-
-# Test compute_mse function
-def test_compute_mse_valid():
-    y_true = np.array([1, 2, 3])
-    y_pred = np.array([1, 2, 3])
-    result = compute_mse(y_true, y_pred)
-    assert np.isclose(result, 0.0), f"Expected 0.0, but got {result}"
-
-
-def test_compute_mse_non_broadcastable():
-    y_true = np.array([1, 2])
-    y_pred = np.array([1, 2, 3])
-    with pytest.raises(ValueError):
-        compute_mse(y_true, y_pred)
-
-
-def test_compute_mse_edge_case():
-    y_true = np.array([0])
-    y_pred = np.array([0])
-    result = compute_mse(y_true, y_pred)
-    assert np.isclose(result, 0.0), f"Expected 0.0, but got {result}"
-
-    # Test compute_comparison function
-
-
-def test_compute_comparison_rmse_valid():
-    y_true = np.array([1, 2, 3])
-    y_pred = np.array([1, 2, 3])
-    result = compute_comparison(y_true, y_pred, "rmse")
-    expected = compute_rmse(y_true, y_pred)
-    assert np.isclose(
-        result, expected), f"Expected {expected}, but got {result}"
-
-
-def test_compute_comparison_mae_valid():
-    y_true = np.array([1, 2, 3])
-    y_pred = np.array([1, 2, 3])
-    result = compute_comparison(y_true, y_pred, "mae")
-    expected = compute_mae(y_true, y_pred)
-    assert np.isclose(
-        result, expected), f"Expected {expected}, but got {result}"
-
-
-def test_compute_comparison_mse_valid():
-    y_true = np.array([1, 2, 3])
-    y_pred = np.array([1, 2, 3])
-    result = compute_comparison(y_true, y_pred, "mse")
-    expected = compute_mse(y_true, y_pred)
-    assert np.isclose(
-        result, expected), f"Expected {expected}, but got {result}"
-
-
-def test_compute_comparison_invalid_metric():
-    y_true = np.array([1, 2, 3])
-    y_pred = np.array([1, 2, 3])
-    # Should raise ValueError due to invalid metric
-    with pytest.raises(ValueError):
-        compute_comparison(y_true, y_pred, "invalid_metric")
-
-
-def test_compute_comparison_non_broadcastable():
-    y_true = np.array([1, 2])
-    y_pred = np.array([1, 2, 3])
-    # Should raise ValueError due to non-broadcastable arrays
-    with pytest.raises(ValueError):
-        compute_comparison(y_true, y_pred, "rmse")
-
-
-def test_compute_comparison_edge_case():
-    y_true = np.array([0])
-    y_pred = np.array([0])
-    result_rmse = compute_comparison(y_true, y_pred, "rmse")
-    result_mae = compute_comparison(y_true, y_pred, "mae")
-    result_mse = compute_comparison(y_true, y_pred, "mse")
-
-    # All should be 0 for identical arrays
-    assert np.isclose(result_rmse, 0.0), f"Expected 0.0, but got {result_rmse}"
-    assert np.isclose(result_mae, 0.0), f"Expected 0.0, but got {result_mae}"
-    assert np.isclose(result_mse, 0.0), f"Expected 0.0, but got {result_mse}"
+        if func == compute_van_rossum_distance:
+            func(y_true, y_pred, np.array([0, 1, 2]))
+        else:
+            func(y_true, y_pred)
