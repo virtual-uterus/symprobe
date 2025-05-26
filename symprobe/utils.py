@@ -215,7 +215,7 @@ def get_range(num_range):
     return num_list
 
 
-def extract_spike_times(signal, time, height=-50):
+def extract_spike_times(signal, time, height=-40):
     """Extract spike times from a signal using peak detection
 
     Args:
