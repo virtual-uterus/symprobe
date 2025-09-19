@@ -168,13 +168,12 @@ def load_data(data_path, log_path, delimiter=","):
     if len(columns) < 3:
         raise IndexError("missing point IDs in vtu file.")
 
-    if columns[2] == "vtkOriginalPointIds":
+    if columns[-1] == "vtkOriginalPointIds":
         # Paraview export of single cell data
-        cell_ids = np.unique(df[columns[2]].to_numpy())
+        cell_ids = np.unique(df[columns[-1]].to_numpy())
         nb_cells = len(cell_ids)
         nb_timesteps = time_vals.size // nb_cells
         tmp_V = np.zeros((nb_timesteps, nb_cells))  # Temporary placeholder
-
         for i in range(nb_cells):
             # Get the output of each cell
             idx = np.arange(i, V.size, nb_cells)
@@ -187,7 +186,7 @@ def load_data(data_path, log_path, delimiter=","):
     # Create correct timesteps in seconds
     t = np.linspace(0, (nb_timesteps - 1) * timestep * 1e-3, nb_timesteps)
 
-    return V, t, cell_ids[0:3]
+    return V, t, cell_ids[0:nb_cells]
 
 
 def get_range(num_range):
