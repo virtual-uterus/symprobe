@@ -242,6 +242,38 @@ def cell_fct(dir_path, rng, sim_name, estrus, delimiter):
             raise e
 
 
+def map_fct(dir_path, rng, sim_name, delimiter):
+    """Maps the extracted cells to electrode positions
+
+    Arguments:
+    dir_path -- str, path to the directory containing the data.
+    rng -- int or list[int], range of simulation numbers.
+    sim_name -- str, name of the simulation to load data from.
+    delimiter -- str, delimiter in csv file.
+
+    Returns:
+
+    Raises:
+    Exception -- if an error occurs while extracting the data.
+
+    """
+    nb_sims, _ = _fct_setup(rng, "estrus")
+
+    for i, sim_num in enumerate(nb_sims):
+        try:
+            V, t, cell_ids, log_path = _data_extract(
+                sim_name,
+                sim_num,
+                dir_path,
+                delimiter,
+            )
+
+            plots.map_cell_data(np.flip(V, axis=1), t)
+
+        except Exception as e:
+            raise e
+
+
 def parameter_fct(
     dir_path,
     parameter,

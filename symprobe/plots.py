@@ -49,6 +49,44 @@ def plot_cell_data(V, t, estrus="estrus"):
         plt.show()
 
 
+def map_cell_data(V, t):
+    """Plots the membrane potential of cells as if extracted from electrodes
+
+    Arguments:
+    V -- ndarray, array with data from N cells to be plotted.
+    t -- ndarray, time vector.
+
+    Return:
+
+    Raises:
+    ValueError -- if the shapes do not agree.
+
+    """
+    # Create figure and plot
+
+    if not V.shape[0] == t.shape[0]:
+        raise ValueError("dimensions must agree.")
+
+    fig, ax = plt.subplots(dpi=300)
+    for j in range(V.shape[1]):
+        # Normalise data to plot on the same plot
+        norm_data = V[:, j] - min(V[:, j])
+        norm_data /= max(norm_data)
+        plt.plot(t, norm_data + 1.5 * j, "-k")
+
+    plt.xlabel("Time (s)", fontsize=15)
+    plt.ylabel("Electrode number", fontsize=15)
+
+    plt.xticks(fontsize=12)
+    plt.yticks(fontsize=12)
+
+    plt.xlim([0, max(t)])
+    plt.ylim([-1, 12])
+
+    plt.subplots_adjust(left=LEFT, right=RIGHT, bottom=BOTTOM)
+    plt.show()
+
+
 def plot_cell_comparison(V1, V2, t, estrus="estrus"):
     """Plots the membrane potential of cells from two simulations
 

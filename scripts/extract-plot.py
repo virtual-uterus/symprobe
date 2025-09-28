@@ -88,6 +88,15 @@ if __name__ == "__main__":
 
     cell_parser.set_defaults(func=extract_script_fct.cell_fct)
 
+    # Subcommand: map
+    map_parser = subparsers.add_parser(
+        "map", help="Maps the extracted data of cells as if electrode data"
+    )
+
+    add_shared_arguments(map_parser)
+
+    map_parser.set_defaults(func=extract_script_fct.map_fct)
+
     # Subcommand: parameter
     parameter_parser = subparsers.add_parser(
         "parameter",
@@ -177,6 +186,13 @@ if __name__ == "__main__":
                 args.sim_numbers,
                 args.sim_name,
                 args.estrus,
+                args.delimiter,
+            )
+        elif args.command == "map":
+            args.func(
+                dir_path,
+                args.sim_numbers,
+                args.sim_name,
                 args.delimiter,
             )
         elif args.command == "parameter":
